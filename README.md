@@ -1023,7 +1023,7 @@ graph LR
 ## 🔒 SEÇÃO 5: SEGURANÇA E GOVERNANÇA (NOVA)
 
 ### **5.1 PRINCIPAIS VULNERABILIDADES (OWASP TOP 10 LLM)**
-
+    
 | **VULNERABILIDADE** | **DESCRIÇÃO** | **MITIGAÇÃO** |
 |---|---|---|
 | **Prompt Injection** | Atacante manipula o input para fazer o modelo ignorar instruções de segurança (Jailbreak) | Delimitadores claros; Validação de input; LLM Guardrails; Análise de intenção |
