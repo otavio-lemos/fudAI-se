@@ -1,8 +1,7 @@
 # fudAI-se
 
 ## canivete suiço de ia - conceitos, ferramentas e recursos
-## espero que esse canivete suiço de ia salve naqueles momentos imediatos igual o canivete do shell me salvou inumeras vezes...
-### grande aurelio, copiada sua ideia https://aurelio.net/shell/canivete/ e espero que salve muitas pessoas assim como fui salvo...
+#### espero que esse canivete suiço de ia salve muitas pessoas igual fui salvo...grande aurelio https://aurelio.net/shell/canivete/ 
 
 ---
 
