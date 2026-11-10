@@ -13,7 +13,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 1. [Conceitos fundamentais de IA](#1-conceitos-fundamentais-de-ia) — arquiteturas, RAG, treinamento, prompts, métricas e parâmetros.
 2. [Ferramentas e frameworks](#2-ferramentas-e-frameworks) — agentes, execução local, automação, código e infraestrutura.
 3. [Recursos, serviços e APIs](#3-recursos-serviços-e-apis) — modelos atuais, embeddings, imagem, vídeo, voz, bancos e hospedagem.
-4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — 12 casos de aplicação, comandos e códigos.
+4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — 14 casos de aplicação, comandos e códigos.
 5. [Segurança e governança](#5-segurança-e-governança) — controles para dados, ferramentas e aplicações.
 6. [Metodologia e fontes](#6-metodologia-e-fontes) — referências e critérios de manutenção.
 
@@ -31,6 +31,8 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 | Entender agentes que trabalham sozinhos e coordenam outros | [1.15 Agentes e orquestração](#115-agentes-autônomos-subagentes-e-orquestração) |
 | Fazer dois agentes de código revisarem e corrigirem em loop | [4.13 Autor e revisor](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) |
 | Escolher um orquestrador pronto para agentes de código | [2.11 Orquestração](#211-orquestração-projetos-com-adoção-ampla) |
+| Automatizar navegador, desktop ou celular | [2.12 Ferramentas](#212-agentes-de-navegador-computador-e-celular) e [4.14 Receitas](#414-navegador-computador-e-celular-na-prática) |
+| Dar memória a um agente e conectar apps | [2.13 Memória](#213-memória-persistente-para-agentes) e [4.15 Receitas](#415-memória-integrações-e-trabalho-recorrente) |
 | Criar especialistas por função | [1.16 Exemplo de orquestrador](#116-exemplo-orquestrador-que-cria-especialistas-por-função) |
 | Escolher modelos gratuitos sem GPU local | [3.10 Modelos gratuitos hospedados](#310-modelos-gratuitos-hospedados) |
 | Montar uma aplicação de verdade | [4. Exemplos](#4-exemplos-práticos-com-arquitetura) |
@@ -464,6 +466,9 @@ Cada nome leva ao projeto ou à documentação oficial. A seleção mapeia funç
 | [LlamaIndex](https://docs.llamaindex.ai/) | Ingestão, indexação e recuperação | Aplicações centradas em dados e documentos |
 | [PydanticAI](https://ai.pydantic.dev/) | Agentes com tipos e validação | Integração Python com contratos de entrada/saída |
 | [CrewAI](https://docs.crewai.com/) | Agentes, equipes e flows | Divisão de trabalho com responsabilidades explícitas |
+| [Agno](https://github.com/agno-agi/agno) | Agentes, equipes, workflows e serviços AgentOS | Organizar uma equipe de pesquisa/implementação/revisão e publicá-la como serviço; núcleo Apache-2.0, modelos e infraestrutura configurados à parte |
+| [OWL](https://github.com/camel-ai/owl) | Colaboração multiagente sobre CAMEL-AI, com navegação e execução de código | Dividir uma pesquisa com documentos, cálculo e síntese; Apache-2.0, integra OpenRouter, mas ferramentas e cotas são configuradas separadamente |
+| [OpenManus](https://github.com/FoundationAgents/OpenManus) | Implementação aberta de agente generalista com ferramentas | Experimentar uma tarefa de pesquisa e produção de artefatos; MIT, exige configurar modelos/chaves e dependências; não confundir com o serviço Manus |
 | [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) | Agentes e workflows em Python/.NET | Projetos no ecossistema Microsoft e migração de AutoGen |
 | [Semantic Kernel](https://github.com/microsoft/semantic-kernel) | Integração de IA com aplicações | Sistemas existentes; confira os guias de migração do ecossistema Microsoft |
 | [Google ADK](https://google.github.io/adk-docs/) | Kit de desenvolvimento de agentes | Agentes, ferramentas e avaliação no ecossistema Google |
@@ -488,6 +493,7 @@ Cada nome leva ao projeto ou à documentação oficial. A seleção mapeia funç
 | [Skills do Claude](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) | Instruções e recursos reutilizáveis carregados conforme a tarefa | Formato e execução dependem do host; leia permissões dos scripts |
 | [Playwright](https://playwright.dev/python/) | Automação de navegador com código | Preferível para passos conhecidos e verificáveis |
 | [Browser Use](https://github.com/browser-use/browser-use) | Navegação orientada por agentes | Útil para interfaces variáveis; exige limites e validação de resultado |
+| [Composio](https://github.com/ComposioHQ/composio) | Integrações de ferramentas e autenticação para agentes | Conectar um agente a GitHub, planilhas ou outros serviços por SDK/MCP; SDK MIT, conta, credenciais e condições do serviço são separadas |
 | [E2B](https://e2b.dev/docs) | Sandboxes para execução de código | Isolamento é parte da aplicação, não uma propriedade do prompt |
 | [OpenTelemetry](https://opentelemetry.io/docs/) | Instrumentação de traces, métricas e logs | Ajuda a correlacionar chamadas de modelo, recuperação e ferramentas |
 
@@ -547,6 +553,17 @@ GRPO é uma técnica de otimização de política com comparação relativa em g
 | Apps web/mobile | [Bubble](https://manual.bubble.io/), [FlutterFlow](https://docs.flutterflow.io/) | Construção visual de aplicações |
 | Ferramentas internas | [Retool](https://docs.retool.com/), [Appsmith](https://docs.appsmith.com/), [Budibase](https://docs.budibase.com/) | Painéis, formulários e administração |
 | Sites | [Webflow](https://webflow.com/), [Framer](https://www.framer.com/) | Publicação visual de sites |
+
+#### Automação aberta: eventos, scripts e ações
+
+| Ferramenta | Caso concreto | Execução e licença |
+| --- | --- | --- |
+| [Activepieces](https://github.com/activepieces/activepieces) | Receber um formulário, classificar com IA e criar uma tarefa no sistema de atendimento | Builder visual e conectores; Community Edition MIT, funcionalidades enterprise comerciais; configurar autenticação e o modelo da etapa de IA |
+| [Automatisch](https://github.com/automatisch/automatisch) | Receber um webhook e registrar os dados em outro aplicativo | Automação visual self-hosted; CE AGPL-3.0, arquivos enterprise têm licença comercial. Um fluxo entre apps não exige um LLM |
+| [Windmill](https://github.com/windmill-labs/windmill) | Transformar um script Python de conferência em formulário, API e rotina agendada | Scripts, workers e flows; build sem enterprise sob AGPLv3, clientes sob Apache-2.0. A distribuição Community Edition pronta também inclui componentes proprietários e termos próprios: [licença](https://github.com/windmill-labs/windmill/blob/main/LICENSE) |
+| [Huginn](https://github.com/huginn/huginn) | Monitorar um RSS ou página, filtrar mudanças e produzir um resumo periódico | Rede de agentes que produzem/consomem eventos; MIT, self-hosted. Esses agentes podem ser regras determinísticas; um LLM é opcional e precisa de configuração |
+
+**Langflow e Flowise são projetos diferentes.** Ambos já estão no mapa de construção visual; escolha pela integração e pelo fluxo necessário. Nenhum substitui automaticamente um navegador, um agente de código ou um executor de desktop. Veja a [receita de memória e automação](#415-memória-integrações-e-trabalho-recorrente).
 
 Self-hosted, código visível e open source são propriedades distintas. Leia licenças, limites de uso, custos dos conectores e recursos da edição escolhida.
 
@@ -641,6 +658,34 @@ OpenHands: [agentes externos por ACP](https://github.com/OpenHands/OpenHands/blo
 Fontes oficiais: [OpenClaw: ACP e subagentes](https://docs.openclaw.ai/tools/acp-agents), [instalação e alvos ACPX](https://docs.openclaw.ai/tools/acp-agents/quickstart), [Hermes: catálogo incluído](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) e [padrões de delegação](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns).
 
 A ferramenta aberta e a oferta do modelo são escolhas separadas. Configure também o modelo do coordenador e de cada trabalhador; para modelos gratuitos hospedados, consulte a [seção 3.10](#310-modelos-gratuitos-hospedados). Instalar o orquestrador não torna gratuitos os serviços chamados. As integrações foram conferidas na documentação, sem execução autenticada de ponta a ponta nesta revisão.
+
+### 2.12 Agentes de navegador, computador e celular
+
+Escolha a superfície onde o trabalho acontece. Um navegador controlado por SDK, o navegador já autenticado do usuário e o desktop completo têm requisitos diferentes. Os projetos abaixo foram conferidos em 10/11/2026; os casos são aplicações propostas, não testes realizados neste repositório.
+
+| Ferramenta | Superfície e caso concreto | Requisitos e limites |
+| --- | --- | --- |
+| [Stagehand](https://github.com/browserbase/stagehand) | SDK para navegar e extrair dados estruturados de uma página, por exemplo uma tabela de faturas | MIT; navegador local ou infraestrutura compatível e modelo configurado. Oferece operações como `act`, `observe` e `extract`; Browserbase hospedado é um serviço separado |
+| [Skyvern](https://github.com/Skyvern-AI/skyvern) | Workflows web com visão e LLM, por exemplo percorrer formulários e reunir comprovantes | AGPL-3.0; execução própria ou Cloud, com dependências e provider. A abordagem busca tolerar mudanças de layout; não garante que qualquer mudança de site seja resolvida |
+| [Nanobrowser](https://github.com/nanobrowser/nanobrowser) | Extensão no navegador já usado pela pessoa; consultar páginas logadas e salvar um CSV | Apache-2.0; Chrome e Edge documentados, modelo/chave próprios ou local. Páginas podem ser enviadas ao provider escolhido; não tratar a sessão logada como isolamento automático |
+| [Agent S](https://github.com/simular-ai/Agent-S) | Usar aplicativos pela tela em macOS, Windows ou Linux; transferir dados entre uma aplicação e uma planilha | Apache-2.0; siga a versão: o quickstart local S3 exige também modelo de grounding, que localiza os alvos da tela. O serviço Simular hospedado é uma oferta distinta |
+| [UFO² / UFO³ Galaxy](https://github.com/microsoft/UFO) | UFO² automatiza Windows; Galaxy coordena dispositivos, incluindo Windows, Linux e Android | MIT; exige agentes/configuração por dispositivo e modelos. Suporte multi-dispositivo do Galaxy não significa que o mesmo executável Windows rode sem adaptação em todos os sistemas |
+| [UI-TARS Desktop / Agent TARS](https://github.com/bytedance/UI-TARS-desktop) | Desktop visual e stack multimodal com CLI/Web UI para estudar operação de computador e navegador | Apache-2.0; **repositório arquivado** na consulta. Serve como referência histórica; não recomendar uma implantação nova apenas por demonstrações ou ofertas gratuitas antigas. Os pesos UI-TARS são artefatos distintos |
+| [Mika](https://github.com/wangzan101/Mika) | App Android que opera apps em uma tela de fundo; pesquisar produtos e devolver uma comparação | Apache-2.0; Android 11+ para chat/web/arquivos, Android 12+ para controlar apps, 14+ recomendado. Requer configurar controle do aparelho e provider; runtime no telefone não implica modelo executado no telefone |
+| [ESP32 iPhone Agent](https://github.com/onehumanbeing/esp32-iphone-agent) | App e placa física observam a tela e acionam mouse/teclado no iPhone; exemplo: configurar um alarme | MIT com componente AirPlay/firmware sob GPL-3.0; iOS 18+, ESP32-S3 compatível, AssistiveTouch, espelhamento e modelo com visão. Há app TestFlight e instalação de firmware pelo navegador; build próprio usa Xcode. Não exige computador durante a execução autônoma pelo app |
+
+Os links levam aos mantenedores e seus guias de instalação. Capturas de tela, cookies e resultados podem alcançar serviços externos conforme provider e hospedagem: execução local da ferramenta não significa processamento local do modelo. Para experimentar gratuitamente, selecione um modelo com **as modalidades e ferramentas exigidas**, inclusive grounding quando necessário; um ID `:free` de texto não atende automaticamente um agente visual.
+
+Veja [exemplos de navegação e computador](#414-navegador-computador-e-celular-na-prática).
+
+### 2.13 Memória persistente para agentes
+
+| Ferramenta | O que acrescenta | Exemplo e condições |
+| --- | --- | --- |
+| [Letta](https://github.com/letta-ai/letta) / [Letta Code](https://github.com/letta-ai/letta-code) | Harness com estado, memória, skills, subagentes e interfaces de uso continuado | Manter um assistente de projeto que retoma decisões em outra sessão. Apache-2.0; o README de `letta` aponta o código atual em `letta-code`; o servidor V1 está no histórico. Configure o provider e diferencie execução própria de Letta Cloud |
+| [Mem0](https://github.com/mem0ai/mem0) | Camada de memória integrável a agentes e aplicações | Guardar preferências autorizadas por usuário e recuperar só as pertinentes. Apache-2.0; biblioteca, servidor próprio e Cloud são opções diferentes. Os padrões usam serviços OpenAI para LLM/embeddings: reconfigure ambos para uma opção gratuita compatível |
+
+**Memória não é treinamento dos pesos.** Persistir fatos, reescrever instruções ou aprender uma skill não equivale a atualizar os parâmetros do modelo. Registre usuário/projeto, origem, data e validade; permita corrigir e excluir lembranças. Avalie recuperação indevida, fatos contraditórios e mistura de usuários, não apenas se o agente “lembrou”.
 
 [↑ Índice](#índice)
 
@@ -802,7 +847,7 @@ Antes de começar: confira preço zero da variante, elegibilidade da conta, cota
 
 ## 4. Exemplos práticos com arquitetura
 
-Os 12 cenários das seções 4.2 a 4.13 seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
+Os 14 cenários das seções 4.2 a 4.15 seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
 
 ### 4.1 Configuração
 
@@ -1391,6 +1436,40 @@ Esta é uma receita de arquitetura; o loop de edição real de um repositório n
 
 ---
 
+### 4.14 Navegador, computador e celular na prática
+
+**Caso:** consultar um portal, reunir informações e entregar uma tabela verificável. Escolha uma das rotas abaixo conforme a interface necessária; são receitas para configurar nas ferramentas, não automações já executadas aqui.
+
+| Rota | Ferramenta e sequência proposta | Como conferir |
+| --- | --- | --- |
+| SDK web | Stagehand: abrir a página com o navegador configurado → localizar/operar os elementos → extrair a tabela com schema → salvar o resultado | Comparar valores com a página de origem, validar campos e registrar URL/data; um schema não comprova o valor extraído |
+| Workflow web | Skyvern: definir entrada e campos desejados → configurar etapas de navegação/extração → executar no ambiente de teste → devolver os arquivos | Testar campos ausentes, mudança de página, login expirado e retomada; guardar evidência do estado final |
+| Navegador atual | Nanobrowser: abrir páginas de teste no Chrome/Edge → configurar modelo → pedir comparação de itens → salvar CSV | Conferir linhas e links contra as páginas e aprovar ações de envio conforme o modo escolhido |
+| Desktop | Agent S: seguir o quickstart da versão e configurar modelo principal/grounding; ou UFO² no Windows / Galaxy nos dispositivos configurados → copiar registros fictícios entre aplicações | Comparar origem e destino, tratar duplicatas e conferir o arquivo salvo; testar primeiro com dados de laboratório |
+| Android | Mika: configurar provider e controle do telefone → pedir busca/comparação em um app → receber o resultado | Confirmar que a tela de fundo contém o app esperado, conferir o resultado e assumir tarefas que exijam interação humana |
+| iPhone físico | ESP32 iPhone Agent: instalar app/firmware → parear e calibrar → configurar modelo visual → pedir criação de um alarme de teste | Abrir o relógio e conferir hora/repetição. O hardware é necessário, e as telas não espelháveis não ficam visíveis ao agente |
+
+Exemplo de pedido adaptável: “Consulte os dez registros de teste, devolva identificador, valor e origem em CSV; informe campos ausentes e pare se o login expirar”. O executor precisa receber a URL/aplicação real e os critérios de conclusão. Não peça que um agente invente seletores ou alegue executar uma ferramenta não instalada. Para UI-TARS/Agent TARS, use o [registro histórico](#212-agentes-de-navegador-computador-e-celular) antes de reaproveitar um tutorial antigo.
+
+### 4.15 Memória, integrações e trabalho recorrente
+
+**Caso:** um assistente recebe trabalho, consulta preferências autorizadas, executa etapas e conserva uma entrega para a próxima execução.
+
+| Necessidade | Ferramentas e receita proposta | Evidência de conclusão |
+| --- | --- | --- |
+| Equipe especializada | OWL ou Agno: configurar providers e ferramentas → distribuir pesquisa, cálculo e síntese → reunir evidências. OpenManus é uma alternativa de agente generalista para experimentar a tarefa completa | Fontes, cálculos, artefatos e pendências; a existência de vários agentes não prova independência nem qualidade |
+| Memória entre sessões | Letta/Letta Code para um assistente com estado; Mem0 para acrescentar memória a uma aplicação existente → guardar uma preferência de teste → iniciar outra sessão → recuperar e depois excluir | Confirmar lembrança na segunda sessão, ausência para outro usuário e exclusão posterior; distinguir memória do histórico enviado ao modelo |
+| Ação em aplicativo | Composio: conectar uma conta de teste → disponibilizar só as ferramentas da tarefa ao agente → criar um registro de laboratório | Identificador retornado pelo serviço e conferência no destino; o SDK não elimina autenticação nem a política de cobrança do serviço |
+| Evento de negócio | Activepieces ou Automatisch: webhook de teste → validar campos → transformar/classificar quando necessário → criar tarefa no app conectado | Histórico do fluxo e identificador no destino; impedir duplicação do mesmo evento |
+| Script recorrente | Windmill: cadastrar script e recursos → executar com entrada fictícia → publicar formulário/API ou agendamento | Saída, logs e artefato produzido; escolher a distribuição/licença correta para o uso |
+| Monitoramento | Huginn: receber eventos de RSS/webhook → filtrar os relevantes → reunir um resumo em destino de teste | Comparar eventos recebidos e selecionados; configurar etapa LLM somente se necessária |
+
+Para ofertas gratuitas hospedadas, configure todos os modelos envolvidos conforme a [seção 3.10](#310-modelos-gratuitos-hospedados), incluindo embeddings, resumos e trabalhadores. Acesso gratuito varia por provider e ferramenta; nem toda integração aceita o mesmo modelo. Essas receitas são pontos de partida documentais, sem implantação ou agendamento criado por este repositório.
+
+[↑ Índice](#índice)
+
+---
+
 ## 5. Segurança e governança
 
 Controles devem existir na aplicação e na infraestrutura. Instruir um modelo a “não revelar dados” não substitui autenticação, autorização ou isolamento.
@@ -1467,6 +1546,8 @@ Pontos de manutenção confirmados nas fontes oficiais:
 **Auditoria do PR:** conferidos os 300 destinos HTTP(S) únicos então presentes: 298 responderam, Milvus apresentou ciclo de redirecionamento (endereço corrigido) e Neo4j respondeu 403 ao script, mas abriu na pesquisa web. Âncoras e arquivos locais foram verificados; os cinco blocos Python passaram por análise de sintaxe e os quatro exemplos completos coincidem com os arquivos executáveis. Os 18 testes offline passaram, incluindo criação e fechamento de clientes próprios e preservação dos clientes injetados; a construção do exemplo Agents SDK também foi exercitada com execução de modelo simulada. Isso não comprova chamadas autenticadas nem qualidade dos modelos remotos.
 
 **Limitações:** o catálogo não cobre todos os lançamentos. As fontes oficiais podem mudar e variar por idioma; divergências encontradas no catálogo Gemini estão registradas na seção de modelos. Não foram medidos rankings, VRAM mínima, latência, ganhos de treino ou preços comparativos. Recursos dependentes de conta não foram confirmados com credenciais reais.
+
+**Cobertura dos 24 projetos sugeridos:** a descrição original do [vídeo indicado](https://www.youtube.com/watch?v=ywmiH9KzcvY) foi usada para identificar os repositórios; nomes, recursos, licenças e manutenção foram conferidos nos mantenedores. O nº 17 é OWL, o nº 20 é Automatisch e o nº 3 é Langflow. O vídeo é fonte de descoberta, não validação das capacidades. Os 18 projetos ausentes foram incorporados às seções correspondentes; os seis já presentes — smolagents, OpenAI Agents SDK, CrewAI, Langflow, Hermes e OpenClaw — permanecem no guia. Flowise também permanece como projeto distinto. UI-TARS Desktop/Agent TARS fica identificado como arquivado; Letta aponta para sua implementação atual. A ampliação cobre os 24 projetos, sem copiar a ordem por estrelas nem tratar tudo como orquestrador de código.
 
 ### 6.4 Rotina sugerida de manutenção
 

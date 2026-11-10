@@ -2,6 +2,15 @@
 
 **Estrutura atual proposta neste PR:** guia completo e sequencial no `README.md`, com exemplos executáveis em `exemplos/`. O conteúdo das oito páginas de `docs/` foi reunido no README; a divisão em páginas separadas foi substituída.
 
+## 2026-11-10 — amplia cobertura dos 24 projetos indicados
+
+- Identifica os 24 repositórios pela descrição original do vídeo: OWL, Automatisch e Langflow corrigem nomes do resumo recebido.
+- Acrescenta os 18 projetos ausentes, com papel, caso prático, licença e requisitos: ESP32 iPhone Agent, Mika, UFO, Agent S, Automatisch, Nanobrowser, Windmill, OWL, Skyvern, Letta/Letta Code, Activepieces, Stagehand, Composio, UI-TARS Desktop/Agent TARS, Agno, Huginn, OpenManus e Mem0.
+- Integra equipes em 2.1, conectores em 2.2 e automação em 2.6; adiciona navegador/desktop/celular em 2.12 e memória em 2.13, mantendo um README sequencial.
+- Acrescenta receitas 4.14 e 4.15; o guia passa a 14 casos práticos, sem alterar os scripts executáveis.
+- Registra o arquivamento de UI-TARS, a transição de Letta e as distinções de licença/edição no Windmill, Automatisch, Activepieces e firmware ESP32.
+- Distingue runtime local de modelo local, ferramenta aberta de inferência gratuita e memória de treinamento dos pesos.
+
 ## 2026-11-10 — verificação dos apontamentos de código e nomenclatura
 
 - Confirma os checkpoints Qwen3.8-27B, MiniMax-M3.1-Flash e GLM-5.3-Flash nas organizações oficiais; explicita a diferença entre checkpoint e ID de API.
