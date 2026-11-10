@@ -4,7 +4,7 @@
 
 Espero que esse canivete suíço de IA salve muitas pessoas como fui salvo pelo [canivete suíço do shell do Aurélio](https://aurelio.net/shell/canivete/). Grande Aurélio!
 
-Um guia de consulta em português: **conceito → ferramenta → modelo/serviço → aplicação prática**. Leia na ordem ou vá direto à seção de que precisa. Todo o guia está nesta página; os arquivos Python são exemplos opcionais para execução.
+Um guia de consulta em português: **conceito → ferramenta → modelo/serviço → aplicação prática**. Leia na ordem ou vá direto à seção de que precisa. Todo o guia está nesta página; os arquivos Python são exemplos opcionais para execução. **Prioridade prática: ferramentas abertas e modelos gratuitos, hospedados ou locais.** O acesso gratuito do agy também está mapeado, com suas condições próprias.
 
 *Última atualização: 10 de novembro de 2026.*
 
@@ -31,6 +31,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 | Entender agentes que trabalham sozinhos e coordenam outros | [1.15 Agentes e orquestração](#115-agentes-autônomos-subagentes-e-orquestração) |
 | Fazer dois agentes de código revisarem e corrigirem em loop | [4.13 Autor e revisor](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) |
 | Criar especialistas por função | [1.16 Exemplo de orquestrador](#116-exemplo-orquestrador-que-cria-especialistas-por-função) |
+| Escolher modelos gratuitos sem GPU local | [3.10 Modelos gratuitos hospedados](#310-modelos-gratuitos-hospedados) |
 | Montar uma aplicação de verdade | [4. Exemplos](#4-exemplos-práticos-com-arquitetura) |
 
 ---
@@ -305,7 +306,7 @@ Fonte: [workflows e agentes no LangGraph](https://docs.langchain.com/oss/python/
 
 #### Fazer um agente de código ser o orquestrador
 
-Você pode colocar o agente principal de Codex, Claude Code ou outro ambiente compatível no papel de **líder técnico**. Ele recebe o objetivo completo, define tarefas e aciona subagentes pelas ferramentas oferecidas pelo ambiente. Cada subagente recebe uma função, os arquivos que pode tocar e o que precisa devolver. O principal acompanha as entregas, solicita correções e integra o resultado.
+Você pode colocar o agente principal de OpenCode, Kilo Code, OMP, agy ou outro ambiente compatível no papel de **líder técnico**. Ele recebe o objetivo completo, define tarefas e aciona subagentes pelas ferramentas oferecidas pelo ambiente. Cada subagente recebe uma função, os arquivos que pode tocar e o que precisa devolver. O principal acompanha as entregas, solicita correções e integra o resultado.
 
 Isso não exige treinar um novo modelo para cada papel: várias sessões podem usar o mesmo modelo com instruções, ferramentas e contextos diferentes. Também é possível reservar modelos mais capazes para planejamento/revisão e modelos menores para tarefas delimitadas, após avaliar a qualidade.
 
@@ -382,7 +383,7 @@ Esse texto orienta um recurso existente. A configuração de ferramentas, permis
 
 ### 1.16 Exemplo: orquestrador que cria especialistas por função
 
-O exemplo abaixo usa o **OpenAI Agents SDK**, dependência opcional diferente do SDK `openai`. Defina `OPENAI_API_KEY` e `OPENAI_MODEL` como na [configuração](#41-configuração) e instale `openai-agents==0.24.0` em um ambiente separado (`python -m pip install openai-agents==0.24.0`). O código mostra delegação dinâmica: a ferramenta cria um especialista para cada chamada. Ele produz propostas e análises de código em texto; para alterar um repositório e executar testes, é necessário conectar ferramentas de arquivos/terminal ou um agente de código, como no exemplo oficial de Codex citado acima.
+Para começar com as ferramentas e ofertas gratuitas, siga primeiro as [receitas com OpenCode, Kilo, Pi/OMP e agy](#45-programação-assistida-por-ia). O exemplo abaixo é uma integração complementar com o **OpenAI Agents SDK**, dependência opcional diferente do SDK `openai`. Defina `OPENAI_API_KEY` e `OPENAI_MODEL` como na [configuração](#41-configuração) e instale `openai-agents==0.24.0` em um ambiente separado (`python -m pip install openai-agents==0.24.0`). O código mostra delegação dinâmica: a ferramenta cria um especialista para cada chamada. Ele produz propostas e análises de código em texto; para alterar um repositório e executar testes, é necessário conectar ferramentas de arquivos/terminal ou um agente de código, como no exemplo oficial de Codex citado acima.
 
 <details>
 <summary>Consultar exemplo de criação e controle por função</summary>
@@ -549,20 +550,27 @@ Self-hosted, código visível e open source são propriedades distintas. Leia li
 
 ### 2.7 Programação assistida por IA
 
-| Ferramenta | Interface/papel |
-| --- | --- |
-| [Codex](https://developers.openai.com/learn/codex) | Agente de programação com interfaces de aplicativo, terminal e editor |
-| [Claude Code](https://code.claude.com/docs/en/overview) | Agente de programação no terminal e integrações |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Agente de terminal no ecossistema Gemini |
-| [OpenCode](https://opencode.ai/docs/) | Agente de terminal com configuração de providers |
-| [Aider](https://aider.chat/docs/) | Edição de código no terminal com integração Git |
-| [Cursor](https://cursor.com/docs), [Windsurf](https://docs.windsurf.com/), [Trae](https://www.trae.ai/) | Editores com IA e fluxos de agentes |
-| [GitHub Copilot](https://docs.github.com/en/copilot), [JetBrains AI](https://www.jetbrains.com/ai/) | Assistência e agentes no ecossistema de desenvolvimento |
-| [Continue](https://docs.continue.dev/), [Zed](https://zed.dev/docs/ai/overview), [Tabnine](https://docs.tabnine.com/) | Integrações e fluxos de IA em editores |
-| [Amazon Q Developer](https://aws.amazon.com/q/developer/) | Assistência ao desenvolvimento no ecossistema AWS; substitui a referência antiga a CodeWhisperer |
-| [Bolt](https://support.bolt.new/), [v0](https://v0.app/docs), [Lovable](https://docs.lovable.dev/), [Replit Agent](https://docs.replit.com/) | Criação de aplicações em ambientes gerenciados |
+A ferramenta executa o trabalho; o provider fornece o modelo. **Não é necessário rodar o modelo localmente.** Você pode combinar um agente aberto com os modelos gratuitos do OpenCode, Kilo Gateway ou OpenRouter.
 
-Verifique contexto enviado ao fornecedor, execução de comandos, escopo de arquivos, configuração do projeto e revisão do diff. Não há multiplicador universal de produtividade. **Sourcegraph Cody**, antes listado aqui, deve ser avaliado a partir do [catálogo atual da Sourcegraph](https://sourcegraph.com/), sem presumir disponibilidade dos planos antigos.
+| Ferramenta | O que faz | Caminho gratuito e exemplo de uso |
+| --- | --- | --- |
+| [OpenCode](https://opencode.ai/docs/) | Agente de código com providers e agentes especializados | Selecionar um modelo marcado Free no catálogo OpenCode ou conectar OpenRouter e escolher uma variante `:free`; autor implementa e subagente revisor confere |
+| [Kilo Code](https://github.com/Kilo-Org/kilocode) | Agente aberto para IDE e CLI; código sob MIT | Usar `kilo-auto/free` ou um modelo marcado free; agente Code implementa e um subagente de revisão analisa o diff |
+| [Pi](https://github.com/earendil-works/pi) | Harness de código aberto, MIT, extensível por SDK, RPC e pacotes | Conectar um provider como OpenRouter e selecionar um modelo gratuito; duas sessões controladas por um programa podem exercer autor e revisor |
+| [Oh My Pi — OMP](https://github.com/can1357/oh-my-pi) | Fork de Pi, MIT, com subagentes e revisão integrados | Configurar OpenRouter com modelo gratuito; usar delegação por `task` e revisão com `/review`, conforme versão |
+| [Antigravity CLI — agy](https://antigravity.google/docs/getting-started) | Agente de código no terminal, com recursos do ecossistema Antigravity | Usar modelo incluído no plano gratuito, como Gemini 3.8 Flash na consulta de 10/11/2026; cotas e acesso são definidos pela conta |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Agente aberto no terminal | Acesso gratuito conforme autenticação, elegibilidade e cotas vigentes; não equivale a uso ilimitado |
+| [Aider](https://aider.chat/docs/), [Continue](https://docs.continue.dev/) | Edição assistida / integração extensível | Conectar um endpoint compatível com modelos gratuitos ou locais; conferir tool calling e formato exigidos |
+| [Codex](https://developers.openai.com/learn/codex), [Claude Code](https://code.claude.com/docs/en/overview) | Outras opções de agentes e integração | Referências complementares; não são a premissa de custo dos exemplos gratuitos deste guia |
+| [Cursor](https://cursor.com/docs), [Windsurf](https://docs.windsurf.com/), [Trae](https://www.trae.ai/), [Copilot](https://docs.github.com/en/copilot), [JetBrains AI](https://www.jetbrains.com/ai/) | Editores e assistentes | Conferir planos e cotas; instalação gratuita não garante inferência gratuita |
+
+**Pi e OMP não são a mesma ferramenta:** o Pi básico deliberadamente não inclui subagentes prontos; isso é feito por extensões, pacotes ou pelo controlador. OMP já inclui recursos próprios de subagentes. A referência antiga `badlogic/pi-mono` redirecionou, na consulta, para `earendil-works/pi`; use a documentação atual, em vez de copiar nomes antigos de pacotes.
+
+**agy entra pelo acesso gratuito e pela utilidade prática.** A existência de um repositório público do CLI não basta para classificar todo o Antigravity como software aberto. Seus modelos, quotas e autenticação seguem o serviço Google. Ele não deve ser tratado como um provider OpenRouter intercambiável sem documentação de suporte.
+
+No Kilo atual, a documentação classifica o modo Orchestrator separado como legado: agentes com acesso completo podem delegar diretamente. Consulte [subagentes personalizados](https://kilo.ai/docs/customize/custom-subagents) e a [nota de migração do Orchestrator](https://kilo.ai/docs/code-with-ai/agents/orchestrator-mode) para a versão instalada.
+
+Fontes: [Kilo gratuito](https://kilo.ai/docs/getting-started/using-kilo-for-free), [providers do OMP](https://github.com/can1357/oh-my-pi/blob/main/docs/providers.md), [Pi](https://github.com/earendil-works/pi), [agentes OpenCode](https://opencode.ai/docs/agents/), [modelos agy](https://antigravity.google/docs/models/). Veja as opções de modelos na [seção 3.10](#310-modelos-gratuitos-hospedados).
 
 ### 2.8 Infraestrutura e execução durável
 
@@ -737,6 +745,24 @@ A entrada genérica “Anthropic fine-tuning” do guia antigo não deve ser int
 
 Consulte [parâmetros](#18-tamanho-do-modelo-e-memória) para configurar as chamadas e [fontes](#6-metodologia-e-fontes) para os critérios de atualização.
 
+### 3.10 Modelos gratuitos hospedados
+
+Aqui “gratuito” significa uma oferta de inferência sem cobrança de tokens dentro das condições do serviço. Não exige GPU local e não determina a licença dos pesos. Ofertas temporárias, cotas e catálogo podem mudar; a consulta abaixo é de 10/11/2026.
+
+| Serviço | O que selecionar | Como usar no agente |
+| --- | --- | --- |
+| [OpenCode Console / Zen](https://opencode.ai/docs/console/models/) | O catálogo consultado lista GLM-5.3-Flash Free, DeepSeek V4.1 Flash Free e MiniMax M3.1 Flash Free, entre ofertas temporárias | Abrir OpenCode, conectar o provider conforme necessário e escolher a variante explicitamente marcada Free em `/models` |
+| [Kilo Gateway](https://kilo.ai/docs/getting-started/using-kilo-for-free) | `kilo-auto/free` ou modelos individuais marcados free | Abrir `kilo`, usar `/models` e filtrar por `free`; na extensão, usar o seletor de modelo |
+| [OpenRouter Free Router](https://openrouter.ai/docs/guides/routing/routers/free-router) | `openrouter/free` | Conectar OpenRouter no agente compatível e selecionar o roteador gratuito; o modelo concreto pode variar |
+| [OpenRouter: variantes gratuitas](https://openrouter.ai/collections/free-models/) | IDs completos terminados em `:free`; conferir o catálogo atual | Fixar um ID para autor e outro para revisor, quando disponíveis; verificar suporte a ferramentas |
+| [Antigravity / agy](https://antigravity.google/docs/models/) | Modelo incluído no plano Free; Gemini 3.8 Flash consta na página consultada | Autenticar no próprio agy e selecionar o modelo elegível na conta; conferir [plano e cotas](https://antigravity.google/docs/plans/) |
+
+Para modelos gratuitos no OpenRouter, use a própria chave OpenRouter; não é necessário adquirir uma chave do fabricante do modelo. A documentação distingue variantes `:free`, sujeitas a cotas, de outros modelos com preço zero que podem ter requisitos de saldo. “Go” do OpenCode é uma assinatura: não confunda o plano com suas promoções de modelos gratuitos.
+
+No Kilo, configure também o modelo pequeno usado em tarefas de fundo e o autocomplete: selecionar um modelo principal gratuito não torna todos os recursos automaticamente gratuitos. Para loops reproduzíveis, prefira IDs fixos quando possível; `kilo-auto/free` e `openrouter/free` podem trocar o modelo subjacente. Se houver indisponibilidade, pause ou selecione outra opção gratuita explicitamente, sem fallback pago automático.
+
+Antes de começar: confira preço zero da variante, elegibilidade da conta, cotas, tratamento dos dados e suporte às ferramentas necessárias. Não reutilize tokens de assinatura de outro produto como se fossem uma API universal. **Ferramenta aberta + modelo gratuito hospedado é uma combinação válida e prioritária aqui.**
+
 [↑ Índice](#índice)
 
 ---
@@ -758,7 +784,7 @@ python -m unittest discover -s tests -v
 
 Requer Python 3.11+; a revisão foi verificada em Python 3.12. As dependências diretas estão fixadas; transitivas não estão totalmente travadas. No PowerShell, a ativação é `.venv\Scripts\Activate.ps1`.
 
-Para exemplos que usam a OpenAI, defina `OPENAI_API_KEY` no ambiente local e `OPENAI_MODEL` com um ID disponível na sua conta. Não grave a chave no código ou no Git. Em bash, é possível digitá-la sem eco nem incluí-la no comando salvo pelo histórico:
+As receitas de agentes nas seções 4.5 e 4.13 usam ferramentas concretas com modelos gratuitos hospedados. Os scripts Python abaixo são integrações opcionais com a OpenAI e **não são o caminho gratuito padrão**. Para executá-los, defina `OPENAI_API_KEY` no ambiente local e `OPENAI_MODEL` com um ID disponível na sua conta. Não grave a chave no código ou no Git. Em bash, é possível digitá-la sem eco nem incluí-la no comando salvo pelo histórico:
 
 ```bash
 read -rsp 'OPENAI_API_KEY: ' OPENAI_API_KEY
@@ -877,11 +903,21 @@ Um grafo fixo `retrieve → generate` é RAG em duas etapas, não se torna agent
 
 ### 4.5 Programação assistida por IA
 
-**Caso:** desenvolver ou corrigir um serviço de consulta a documentos.
+**Caso:** implementar uma função, corrigir um bug ou criar uma API, usando ferramentas concretas e ofertas gratuitas hospedadas.
 
-**Receita:** branch isolada, escopo e critérios claros, contexto do repositório, implementação em etapas, revisão do diff e testes relevantes. Use [Codex, Claude Code, Cursor ou alternativas](#27-programação-assistida-por-ia) conforme ambiente e permissões.
+| Receita | Ferramenta e modelo | Como trabalhar |
+| --- | --- | --- |
+| OpenCode sem GPU | OpenCode + uma variante Free de GLM/DeepSeek/MiniMax disponível no catálogo OpenCode | Abrir no projeto, selecionar o modelo Free, pedir implementação com testes e delegar revisão a um agente configurado para leitura |
+| Kilo no editor ou terminal | Kilo Code + `kilo-auto/free` | Selecionar Auto Free, entregar requisitos ao agente Code e pedir revisão por subagente; receber achados e corrigir |
+| Pi extensível | Pi + OpenRouter + ID `:free` com ferramentas | Conectar o provider; usar sessões separadas de autor/revisor ou um pacote de subagentes revisado; automatizar por SDK/RPC quando necessário |
+| OMP com revisão | OMP + OpenRouter + modelo gratuito compatível | Configurar o provider, selecionar o modelo em `/model`, implementar e chamar `/review`; devolver os problemas ao autor |
+| agy com quota gratuita | Antigravity CLI + Gemini 3.8 Flash elegível no plano Free | Abrir `agy` no projeto, selecionar o modelo incluído e pedir implementação/revisão dentro dos recursos disponíveis na versão |
 
-Meça sucesso de tarefas e retrabalho; não prometa “5–10× mais rápido” ou um prazo fixo para qualquer aplicação. Agentes com shell precisam de permissões reais e revisão de comandos/efeitos externos.
+**Primeiro exercício:** em uma branch de um projeto de teste, pedir “implemente validação de CPF, cubra entradas inválidas e explique como executar os testes”. Depois solicitar revisão independente do diff, passar os achados de volta ao autor e executar os testes finais. Defina o comando de teste real do projeto; não aceite “passou” sem saída de execução.
+
+OpenCode e Kilo podem ser iniciados no diretório do projeto com `opencode` e `kilo`. Use `/models` para selecionar a oferta gratuita. Pi/OMP exigem configurar o provider; os comandos de autenticação e instalação devem seguir a versão atual de cada projeto. Nenhuma receita pressupõe que “open source” inclua créditos de inferência.
+
+Para automatizar a troca autor–revisor, siga o [loop da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor). As receitas foram conferidas com a documentação; contas, cotas e chamadas reais a esses serviços não foram exercitadas nesta revisão.
 
 ### 4.6 Aplicação visual com Dify
 
@@ -1233,10 +1269,25 @@ retornar limite_de_rodadas_com_pendencias
 
 Defina no código um teto de rodadas, tempo e custo; uma instrução de prompt não garante esses limites. Registre revisão, testes, parecer e feedback por rodada. Uma revisão inválida ou falha de ferramenta não conta como aprovação. Sem mudança no código nem justificativa que resolva o achado, interrompa o ciclo em vez de pagar por respostas repetidas.
 
+#### Combinações concretas para esse loop
+
+| Autor | Revisor | Quem coordena |
+| --- | --- | --- |
+| OpenCode + modelo Free do próprio catálogo | Subagente de revisão do OpenCode + modelo Free selecionado | Agente principal; configure o revisor com escopo de leitura |
+| Kilo Code + `kilo-auto/free` | Subagente de revisão Kilo + oferta gratuita | Agente principal Kilo; delegação conforme versão atual |
+| OMP + OpenRouter `:free` | Revisores acionados por `/review`, com modelo gratuito configurado | OMP; confira também os modelos dos papéis secundários |
+| Pi + modelo `:free` do OpenRouter | Outra sessão Pi ou OMP com modelo `:free` | Controlador usando SDK/RPC; Pi básico não cria subagentes sozinho |
+| OpenCode + modelo Free | Kilo Code + `kilo-auto/free` | Controlador com adaptadores para os dois clientes e a mesma revisão Git |
+| agy + modelo incluído na quota Free | Revisor/subagente suportado pelo agy, ou outro cliente com oferta gratuita | Recurso nativo documentado ou controlador externo; não presumir uma API OpenRouter no agy |
+
+Essas combinações são receitas de integração, não garantia de interoperabilidade automática. Cada cliente precisa receber a tarefa, acessar a revisão certa e devolver um resultado estruturado. Para experimentar, comece com os dois papéis dentro de OpenCode, Kilo ou OMP; misture clientes quando precisar de uma segunda implementação ou provider. Todos os papéis devem usar ofertas gratuitas explicitamente, inclusive planejamento, resumo e revisão.
+
 #### Ferramentas para montar essa orquestração
 
 | Caminho | O que resolve | Quando escolher |
 | --- | --- | --- |
+| [OpenCode](https://opencode.ai/docs/agents/) / [Kilo Code](https://kilo.ai/docs/customize/custom-subagents) | Agente principal e especialistas configuráveis | Montar autor e revisor com modelos gratuitos hospedados |
+| [OMP](https://github.com/can1357/oh-my-pi) / [Pi](https://github.com/earendil-works/pi) | Subagentes e revisão no OMP / SDK, RPC e extensões no Pi | Controlar sessões e usar OpenRouter ou outro provider suportado |
 | [LangGraph: evaluator–optimizer](https://docs.langchain.com/oss/python/langgraph/workflows-agents) | Estado, condições de retorno, ciclos e persistência configurável | Pipeline próprio com controle explícito de revisão/correção |
 | [Agents SDK: orquestração por código](https://openai.github.io/openai-agents-python/multi_agent/) | Executar agentes, encadear saídas e controlar o loop na aplicação | Dois especialistas com contratos e limites definidos pelo seu código |
 | [Claude Code: subagentes](https://code.claude.com/docs/en/sub-agents) | Especialistas com instruções, contexto e ferramentas delimitados | Revisão delegada dentro do agente de código, sem criar toda a infraestrutura inicial |

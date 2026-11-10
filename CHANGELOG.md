@@ -1,5 +1,13 @@
 # Histórico de alterações
 
+## 2026-11-10 — foco em ferramentas e modelos gratuitos
+
+- Inclui agy, Kilo Code, Pi e OMP, com distinção entre harness aberto e acesso gratuito ao serviço.
+- Mapeia ofertas gratuitas hospedadas no OpenCode, Kilo Gateway, OpenRouter e Antigravity.
+- Reescreve os exemplos de programação e complementa o loop autor–revisor com combinações concretas dessas ferramentas.
+- Corrige a distinção entre Pi básico e OMP e registra a evolução do modo Orchestrator do Kilo.
+- Mantém integrações pagas como material complementar, sem exigir execução local.
+
 ## 2026-11-10 — restaura o guia único e sequencial
 
 - Reúne o conteúdo no README, com os seis capítulos numerados do canivete: conceitos, ferramentas, recursos/APIs, exemplos, segurança e fontes.
