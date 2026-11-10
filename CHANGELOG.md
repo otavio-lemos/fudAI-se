@@ -1,5 +1,10 @@
 # Histórico de alterações
 
+## 2026-11-10 — curadoria de orquestração por adoção e escopo
+
+- Acrescenta Ruflo/Claude Flow e OpenHands, junto de CrewAI, LangGraph e Microsoft Agent Framework, com licença, estrelas consultadas pela API GitHub e distinção de função.
+- Evita apresentar wrappers pequenos como base principal; separa adoção pública de compatibilidade efetivamente testada.
+
 ## 2026-11-10 — foco em ferramentas e modelos gratuitos
 
 - Inclui agy, Kilo Code, Pi e OMP, com distinção entre harness aberto e acesso gratuito ao serviço.

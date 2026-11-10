@@ -611,6 +611,22 @@ A integração antiga de proxy OpenAI-compatible do Helicone é mantida, mas o f
 
 Licenças e recursos variam entre componentes e edições. Esta seção trata de apoio ao produto; essas ferramentas não são modelos de IA.
 
+### 2.11 Orquestração: projetos com adoção ampla
+
+Para escolher a base de um sistema, diferencie plataforma de desenvolvimento, framework programável e camada que coordena agentes de código existentes. O quadro abaixo prioriza projetos ativos e com adoção pública ampla; estrelas são um sinal de comunidade, não prova de qualidade ou compatibilidade.
+
+| Projeto | Estrelas em 10/11/2026, aproximadamente | Licença | Papel e encaixe no loop |
+| --- | --- | --- | --- |
+| [Ruflo, anteriormente Claude Flow](https://github.com/ruvnet/ruflo) | 81,4 mil | MIT | Camada de coordenação com agentes especializados, memória e workflows; documenta integração com diferentes ambientes de código. Candidato para coordenar implementação, revisão e testes; confirmar o adaptador de cada ferramenta na versão escolhida |
+| [OpenHands](https://github.com/OpenHands/OpenHands) | 93,1 mil | MIT no repositório principal | Plataforma de desenvolvimento por agentes, com execução de código e ecossistema próprio. Avaliar para trabalho autônomo no repositório; não equivale automaticamente a um conector entre quaisquer CLIs |
+| [CrewAI](https://github.com/crewAIInc/crewAI) | 60,7 mil | MIT | Framework de equipes com papéis, tarefas e Flows. Permite construir autor, revisor e retorno de feedback; ferramentas de edição/testes e condições do loop precisam ser configuradas |
+| [LangGraph](https://github.com/langchain-ai/langgraph) | 44,7 mil | MIT | Framework de grafos com estado, persistência e ciclos. Adequado para controlar implementação, avaliação e correção; os adaptadores dos agentes continuam sendo parte da integração |
+| [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) | 14,6 mil | MIT | Framework de agentes e workflows em Python/.NET; alternativa do ecossistema Microsoft para orquestração programável |
+
+Contagens consultadas pela API GitHub; os cinco repositórios estavam ativos e não arquivados. Não foi feito benchmark nem teste de integração destes projetos nesta revisão. Use a documentação e o histórico de releases para conferir manutenção e suporte efetivo, além das estrelas.
+
+**Para o cenário deste guia:** investigar primeiro Ruflo quando a prioridade for uma camada sobre agentes de código; OpenHands quando a prioridade for uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph quando a prioridade for controlar o workflow em uma aplicação própria. Nenhum nome da tabela garante, por si, suporte simultâneo a OpenCode, Kilo, OMP e agy ou modelos gratuitos: confirme as integrações e configure os providers da [seção 3.10](#310-modelos-gratuitos-hospedados).
+
 [↑ Índice](#índice)
 
 ---
@@ -1283,6 +1299,8 @@ Defina no código um teto de rodadas, tempo e custo; uma instrução de prompt n
 Essas combinações são receitas de integração, não garantia de interoperabilidade automática. Cada cliente precisa receber a tarefa, acessar a revisão certa e devolver um resultado estruturado. Para experimentar, comece com os dois papéis dentro de OpenCode, Kilo ou OMP; misture clientes quando precisar de uma segunda implementação ou provider. Todos os papéis devem usar ofertas gratuitas explicitamente, inclusive planejamento, resumo e revisão.
 
 #### Ferramentas para montar essa orquestração
+
+Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos de orquestração](#211-orquestração-projetos-com-adoção-ampla): Ruflo/Claude Flow, OpenHands, CrewAI e LangGraph. Eles têm papéis diferentes; escolha conforme a necessidade de coordenar CLIs existentes ou implementar um workflow próprio.
 
 | Caminho | O que resolve | Quando escolher |
 | --- | --- | --- |
