@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## 2026-11-10 — restaura o guia único e sequencial
+
+- Reúne o conteúdo no README, com os seis capítulos numerados do canivete: conceitos, ferramentas, recursos/APIs, exemplos, segurança e fontes.
+- Converte a navegação entre oito páginas em índice e atalhos dentro do próprio README.
+- Explica o ciclo de agentes autônomos, harness, subagentes, orquestrador de código, delegação por função e retorno de evidências, com exemplo de integração.
+- Integra parâmetros e arquiteturas recentes ao capítulo de conceitos e remove resumos duplicados do mapa.
+- Mantém modelos, tecnologias e correções da revisão; disponibiliza os quatro códigos em blocos expansíveis no guia.
+- Remove os oito documentos separados; preserva os scripts executáveis e seus testes como material de apoio.
+
 ## 2026-11-10 — revisão e ampliação geral
 
 - Organiza o README como entrada do canivete e separa conceitos, ferramentas, modelos/serviços, parâmetros, mapa ampliado, exemplos, segurança e fontes em `docs/`.
