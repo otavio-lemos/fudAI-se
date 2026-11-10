@@ -2,6 +2,15 @@
 
 **Estrutura atual proposta neste PR:** guia completo e sequencial no `README.md`, com exemplos executáveis em `exemplos/`. O conteúdo das oito páginas de `docs/` foi reunido no README; a divisão em páginas separadas foi substituída.
 
+## 2026-11-10 — incorpora 13 projetos e caminhos prontos de coordenação
+
+- Inclui DeepSeek Harness, Omarchy, Phone Harness, Herdr, Orca, Claudex Loop, SkillSpector, no-ai-slop, AnyDoc/Firecrawl, Archify, OpenMontage, video-use e OmniRoute, distribuídos por função.
+- Prioriza o loop existente do Claudex entre Claude Code/Codex e os trabalhadores supervisionados do Orca; explica o papel de coordenação de terminais do Herdr.
+- Acrescenta receitas para conversão de documentos, operação de telefone, escrita, documentação visual e produção de vídeo; mantém um README sequencial, agora com 15 casos práticos.
+- Confere licenças, destinos canônicos e requisitos nos mantenedores; diferencia AnyDoc/Firecrawl do homônimo Adobe, Omarchy de orquestrador e OmniRoute de provedor de créditos.
+- Explicita o estágio experimental do Orca, o developer preview do DeepSeek Harness, o OCR hospedado opcional do AnyDoc e a transcrição ElevenLabs no video-use.
+- Mantém os scripts executáveis sem alterações; os novos comandos e integrações foram verificados documentalmente, sem execução autenticada de ponta a ponta.
+
 ## 2026-11-10 — amplia cobertura dos 24 projetos indicados
 
 - Identifica os 24 repositórios pela descrição original do vídeo: OWL, Automatisch e Langflow corrigem nomes do resumo recebido.

@@ -13,7 +13,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 1. [Conceitos fundamentais de IA](#1-conceitos-fundamentais-de-ia) — arquiteturas, RAG, treinamento, prompts, métricas e parâmetros.
 2. [Ferramentas e frameworks](#2-ferramentas-e-frameworks) — agentes, execução local, automação, código e infraestrutura.
 3. [Recursos, serviços e APIs](#3-recursos-serviços-e-apis) — modelos atuais, embeddings, imagem, vídeo, voz, bancos e hospedagem.
-4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — 14 casos de aplicação, comandos e códigos.
+4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — 15 casos de aplicação, comandos e códigos.
 5. [Segurança e governança](#5-segurança-e-governança) — controles para dados, ferramentas e aplicações.
 6. [Metodologia e fontes](#6-metodologia-e-fontes) — referências e critérios de manutenção.
 
@@ -33,6 +33,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 | Escolher um orquestrador pronto para agentes de código | [2.11 Orquestração](#211-orquestração-projetos-com-adoção-ampla) |
 | Automatizar navegador, desktop ou celular | [2.12 Ferramentas](#212-agentes-de-navegador-computador-e-celular) e [4.14 Receitas](#414-navegador-computador-e-celular-na-prática) |
 | Dar memória a um agente e conectar apps | [2.13 Memória](#213-memória-persistente-para-agentes) e [4.15 Receitas](#415-memória-integrações-e-trabalho-recorrente) |
+| Produzir ou editar vídeos com agentes | [4.16 Vídeo](#416-produção-e-edição-de-vídeo-com-agentes) |
 | Criar especialistas por função | [1.16 Exemplo de orquestrador](#116-exemplo-orquestrador-que-cria-especialistas-por-função) |
 | Escolher modelos gratuitos sem GPU local | [3.10 Modelos gratuitos hospedados](#310-modelos-gratuitos-hospedados) |
 | Montar uma aplicação de verdade | [4. Exemplos](#4-exemplos-práticos-com-arquitetura) |
@@ -525,6 +526,7 @@ Cada nome leva ao projeto ou à documentação oficial. A seleção mapeia funç
 | [pandas](https://pandas.pydata.org/docs/), [Polars](https://docs.pola.rs/), [NumPy](https://numpy.org/doc/) | Manipulação de dados e arrays |
 | [Matplotlib](https://matplotlib.org/), [Seaborn](https://seaborn.pydata.org/), [Plotly](https://plotly.com/python/) | Gráficos e exploração |
 | [Docling](https://docling-project.github.io/docling/), [Unstructured](https://docs.unstructured.io/), [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) | Conversão de documentos, layout, tabelas e OCR |
+| [AnyDoc — Firecrawl](https://github.com/firecrawl/anydoc) | Conversor local em Rust, MIT, de documentos para Markdown; inclui CLI e bindings Python/Node. Não confundir com o projeto de pesquisa homônimo da Adobe. PDFs digitalizados exigem OCR: a opção `--ocr hosted` envia conteúdo ao Firecrawl Parse e segue seus limites/custos |
 | [Airbyte](https://docs.airbyte.com/), [dbt](https://docs.getdbt.com/), [Label Studio](https://labelstud.io/guide/) | Integração, transformação e anotação de dados |
 
 ### 2.5 Fine-tuning e otimização
@@ -573,6 +575,7 @@ A ferramenta executa o trabalho; o provider fornece o modelo. **Não é necessá
 
 | Ferramenta | O que faz | Caminho gratuito e exemplo de uso |
 | --- | --- | --- |
+| [DeepSeek Harness — dsh](https://github.com/deepseek-ai/deepseek-harness) | Harness oficial da DeepSeek, MIT, com plugins, ferramentas, planejamento e delegação; **developer preview**, sujeito a mudanças | Configurar provider e credenciais; suporta outros providers e endpoints OpenAI compatíveis. A instalação não inclui inferência DeepSeek gratuita |
 | [OpenCode](https://opencode.ai/docs/) | Agente de código com providers e agentes especializados | Selecionar um modelo marcado Free no catálogo OpenCode ou conectar OpenRouter e escolher uma variante `:free`; autor implementa e subagente revisor confere |
 | [Kilo Code](https://github.com/Kilo-Org/kilocode) | Agente aberto para IDE e CLI; código sob MIT | Usar `kilo-auto/free` ou um modelo marcado free; agente Code implementa e um subagente de revisão analisa o diff |
 | [Pi](https://github.com/earendil-works/pi) | Harness de código aberto, MIT, extensível por SDK, RPC e pacotes | Conectar um provider como OpenRouter e selecionar um modelo gratuito; duas sessões controladas por um programa podem exercer autor e revisor |
@@ -595,6 +598,7 @@ Fontes: [Kilo gratuito](https://kilo.ai/docs/getting-started/using-kilo-for-free
 
 | Ferramentas | Papel |
 | --- | --- |
+| [Omarchy](https://github.com/omacom/omarchy) | Distribuição Linux e ambiente de trabalho com ferramentas para desenvolvimento e agentes. É o sistema onde eles trabalham; não implementa sozinho o loop autor–revisor. Repositório sob MIT; os componentes distribuídos mantêm suas próprias licenças |
 | [Docker](https://docs.docker.com/), [Podman](https://podman.io/docs) | Containers e ambientes reproduzíveis |
 | [Kubernetes](https://kubernetes.io/docs/), [KEDA](https://keda.sh/docs/), [Knative](https://knative.dev/docs/) | Orquestração, escala por eventos e serving serverless |
 | [KServe](https://kserve.github.io/website/), [llm-d](https://llm-d.ai/) | Serving de modelos e inferência distribuída em Kubernetes |
@@ -648,10 +652,13 @@ Contagens consultadas pela API GitHub; os cinco repositórios estavam ativos e n
 
 | Projeto | Recurso existente | Como usar no cenário autor–revisor |
 | --- | --- | --- |
+| [Orca](https://github.com/stablyai/orca) | Workspace MIT com agentes de código, worktrees e orquestração estruturada: Runs, tarefas, trabalhadores supervisionados e mensagens; camada marcada experimental na documentação consultada | Um coordenador despacha implementação e revisão aos agentes habilitados, acompanha conclusões e devolve correções; inclui IDs como Codex, Claude, OpenCode e Antigravity, conforme instalação |
+| [Herdr](https://github.com/herdrdev/herdr) | Multiplexador de terminal Apache-2.0 com servidor persistente, máquinas locais/SSH e CLI para agentes criarem painéis, enviarem prompts e acompanharem outros agentes | Hospedar autor e revisor em CLIs distintos e encaminhar evidências entre eles. A persistência ao desconectar o cliente não mantém processos vivos após reiniciar a máquina/servidor; regras do loop precisam ser definidas |
+| [Claudex Loop](https://github.com/chaseai-yt/claudex-loop) | Workflow MIT pronto entre Claude Code e Codex: requisitos, revisão do plano, implementação e inspeção independente, com ciclos limitados de correção | Opção direta quando os dois CLIs já estão instalados e autenticados. A ferramenta é aberta; o acesso aos modelos segue as contas/planos dos CLIs. Não é uma receita de modelos gratuitos |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Plugin oficial `@openclaw/acpx` para sessões de agentes externos; o catálogo documenta OpenCode, Kilo Code, Claude Code, Gemini CLI e Codex, entre outros | O coordenador inicia o implementador, acompanha a sessão e envia a revisão a outro agente. Configure os alvos permitidos, autenticação e regras do ciclo |
 | [Hermes Agent, da Nous Research](https://github.com/NousResearch/hermes-agent) | `delegate_task` cria subagentes com conversa e sessão de terminal próprias; o diretório é compartilhado por padrão. Skills incluídas delegam tarefas aos CLIs Claude Code e Codex | Use um especialista para implementar e outro, com contexto novo, para revisar; o agente principal recebe os resultados e encaminha as correções |
 
-**Para o cenário deste guia:** quando a prioridade for coordenar CLIs diferentes, comece verificando o OpenClaw com ACPX e os alvos documentados. Hermes oferece delegação nativa e instruções prontas para alguns CLIs externos; isso não implica suporte incluído a qualquer CLI. Ruflo é outra camada de coordenação; OpenHands é uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph atendem workflows programáveis em uma aplicação própria. A [receita da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) mostra como aplicar os papéis e o retorno de feedback.
+**Para o cenário deste guia:** se você já usa Claude Code e Codex, Claudex Loop oferece o ciclo pronto mais específico desta seleção. Para coordenar diversos CLIs, avalie Orca e seus trabalhadores supervisionados; Herdr oferece o ambiente de terminais e comunicação entre agentes. OpenClaw com ACPX é outra integração pronta com alvos documentados. Hermes oferece delegação nativa e instruções prontas para alguns CLIs externos; isso não implica suporte incluído a qualquer CLI. Ruflo é outra camada de coordenação; OpenHands é uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph atendem workflows programáveis em uma aplicação própria. A [receita da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) mostra como aplicar os papéis e o retorno de feedback.
 
 OpenHands: [agentes externos por ACP](https://github.com/OpenHands/OpenHands/blob/main/docs/ACP_AGENTS.md) e [exemplo oficial de refinamento iterativo](https://docs.openhands.dev/sdk/guides/iterative-refinement). São recursos diferentes: o exemplo do SDK usa agentes OpenHands e não comprova um loop pronto entre quaisquer CLIs externos. OpenHands Cloud oferece Claude Code, Codex e Gemini CLI; Pi/OpenCode exigem backend local ou self-hosted.
 
@@ -672,6 +679,7 @@ Escolha a superfície onde o trabalho acontece. Um navegador controlado por SDK,
 | [UFO² / UFO³ Galaxy](https://github.com/microsoft/UFO) | UFO² automatiza Windows; Galaxy coordena dispositivos, incluindo Windows, Linux e Android | MIT; exige agentes/configuração por dispositivo e modelos. Suporte multi-dispositivo do Galaxy não significa que o mesmo executável Windows rode sem adaptação em todos os sistemas |
 | [UI-TARS Desktop / Agent TARS](https://github.com/bytedance/UI-TARS-desktop) | Desktop visual e stack multimodal com CLI/Web UI para estudar operação de computador e navegador | Apache-2.0; **repositório arquivado** na consulta. Serve como referência histórica; não recomendar uma implantação nova apenas por demonstrações ou ofertas gratuitas antigas. Os pesos UI-TARS são artefatos distintos |
 | [Mika](https://github.com/wangzan101/Mika) | App Android que opera apps em uma tela de fundo; pesquisar produtos e devolver uma comparação | Apache-2.0; Android 11+ para chat/web/arquivos, Android 12+ para controlar apps, 14+ recomendado. Requer configurar controle do aparelho e provider; runtime no telefone não implica modelo executado no telefone |
+| [Phone Harness](https://github.com/phone-harness/phone-harness) | Permite a agentes de código observar e operar um telefone real por ações e capturas/OCR; plugins documentados para Hermes e OpenClaw | MIT; Python 3.12/uv. iPhone local via iPhone Mirroring exige Mac com macOS 15+, iOS 18+ e permissões; Android usa ADB/depuração USB em macOS, Linux ou Windows. Serviço Cloud é opcional e separado; o endpoint MCP publicado atende os dispositivos Cloud, não comprova MCP local universal |
 | [ESP32 iPhone Agent](https://github.com/onehumanbeing/esp32-iphone-agent) | App e placa física observam a tela e acionam mouse/teclado no iPhone; exemplo: configurar um alarme | MIT com componente AirPlay/firmware sob GPL-3.0; iOS 18+, ESP32-S3 compatível, AssistiveTouch, espelhamento e modelo com visão. Há app TestFlight e instalação de firmware pelo navegador; build próprio usa Xcode. Não exige computador durante a execução autônoma pelo app |
 
 Os links levam aos mantenedores e seus guias de instalação. Capturas de tela, cookies e resultados podem alcançar serviços externos conforme provider e hospedagem: execução local da ferramenta não significa processamento local do modelo. Para experimentar gratuitamente, selecione um modelo com **as modalidades e ferramentas exigidas**, inclusive grounding quando necessário; um ID `:free` de texto não atende automaticamente um agente visual.
@@ -686,6 +694,15 @@ Veja [exemplos de navegação e computador](#414-navegador-computador-e-celular-
 | [Mem0](https://github.com/mem0ai/mem0) | Camada de memória integrável a agentes e aplicações | Guardar preferências autorizadas por usuário e recuperar só as pertinentes. Apache-2.0; biblioteca, servidor próprio e Cloud são opções diferentes. Os padrões usam serviços OpenAI para LLM/embeddings: reconfigure ambos para uma opção gratuita compatível |
 
 **Memória não é treinamento dos pesos.** Persistir fatos, reescrever instruções ou aprender uma skill não equivale a atualizar os parâmetros do modelo. Registre usuário/projeto, origem, data e validade; permita corrigir e excluir lembranças. Avalie recuperação indevida, fatos contraditórios e mistura de usuários, não apenas se o agente “lembrou”.
+
+### 2.14 Skills para escrita e explicação de código
+
+| Ferramenta | Uso concreto | Condições |
+| --- | --- | --- |
+| [no-ai-slop](https://github.com/petergyang/no-ai-slop) | Skill editorial para reduzir padrões repetitivos de escrita; revisar uma introdução preservando argumentos, fontes e tom | MIT; executada pelo agente escolhido, cujo modelo define o custo. Não detecta autoria de IA nem verifica fatos |
+| [Archify](https://github.com/tt-a1i/archify) | Skill para produzir diagramas e explicações em HTML interativo a partir de ideias ou código, com exportação | Apache-2.0 na licença consultada. Peça que cada componente do diagrama corresponda a arquivos/relações reais; um desenho convincente não comprova arquitetura correta |
+
+Para examinar skills antes de adotá-las, veja [SkillSpector na seção de segurança](#5-segurança-e-governança). Para produção audiovisual com agentes, veja a [receita 4.16](#416-produção-e-edição-de-vídeo-com-agentes).
 
 [↑ Índice](#índice)
 
@@ -769,6 +786,8 @@ Uma URL de PDF não é uma imagem. Use o mecanismo de arquivos/PDF da API ou con
 | [Midjourney](https://docs.midjourney.com/), [Ideogram](https://docs.ideogram.ai/) | Geração visual como serviço | Interface, automação oficialmente suportada e direitos de uso |
 | [Wan](https://huggingface.co/Wan-AI), [HunyuanVideo](https://github.com/Tencent-Hunyuan/HunyuanVideo), [LTX-2](https://huggingface.co/Lightricks/LTX-2) | Vídeo com modelos/pipelines disponíveis | Condicionamento, duração, resolução, FPS, memória e licença |
 | [Veo/Gemini vídeo](https://ai.google.dev/gemini-api/docs/video), [Kling](https://app.klingai.com/global/), [Runway](https://docs.dev.runwayml.com/) | Vídeo gerenciado | Região, acesso à API, áudio, limites de clipe e custo |
+| [OpenMontage](https://github.com/OpenMontageInc/OpenMontage) | Pipeline de produção audiovisual operável por agentes de código: pesquisa, roteiro, mídia, áudio, montagem e verificação | AGPL-3.0; repositório atual de `calesthio/OpenMontage`. Depende das ferramentas e providers da rota escolhida; clipes próprios/recuperados e geração por APIs têm custos e direitos distintos |
+| [video-use](https://github.com/browser-use/video-use) | Skill para editar tomadas existentes, cortar, compor e conferir o vídeo renderizado | MIT; FFmpeg/ffprobe e dependências Python. A instalação documentada usa ElevenLabs Scribe para transcrição, com chave e condições do serviço; não é um fluxo inteiramente gratuito por padrão |
 | [ComfyUI](https://docs.comfy.org/), [Diffusers](https://huggingface.co/docs/diffusers/index) | Workflows e pipelines | Versões dos nós, modelos auxiliares e dependências |
 
 DALL-E 3, FLUX.1 e Ideogram 2.0 eram as referências antigas do README; não representam sozinhas o catálogo atual. Para produção audiovisual, mantenha parâmetros de resolução, proporção, duração, FPS, seed e condicionamento junto de cada geração. O mesmo seed não garante identidade entre versões, hardwares ou pipelines.
@@ -805,6 +824,7 @@ Não há banco “mais usado” ou “mais barato” universal. Meça recall, la
 | Busca para agentes | [Tavily](https://docs.tavily.com/), [Exa](https://docs.exa.ai/), [Brave Search](https://api-dashboard.search.brave.com/documentation), [Serper](https://serper.dev/), [Perplexity](https://docs.perplexity.ai/) | Diferencie resultados de busca, extração de páginas e respostas geradas com citações |
 | Conteúdo web | [Firecrawl](https://docs.firecrawl.dev/) | Extração/rastreamento; qualidade e acesso ao conteúdo variam |
 | Gateways/roteamento | [OpenRouter](https://openrouter.ai/docs/quickstart), [LiteLLM](https://docs.litellm.ai/), [Helicone](https://docs.helicone.ai/gateway/overview) | Uma interface comum não garante recursos idênticos nem políticas de dados iguais |
+| Gateway próprio | [OmniRoute](https://github.com/cheaper-inference/OmniRoute) | MIT; roteamento multi-provider, compatibilidade entre APIs, cotas e fallback. Destino atual de `diegosouzapw/OmniRoute`. Usa contas e acessos elegíveis do usuário; não concede créditos ou inferência ilimitada |
 | Inferência gerenciada | [Hugging Face Inference Endpoints](https://huggingface.co/docs/inference-endpoints/index), [Together AI](https://docs.together.ai/), [Fireworks](https://docs.fireworks.ai/), [Replicate](https://replicate.com/docs) | Catálogo, hardware e cobrança por endpoint/modelo |
 | Hardware/serviços especializados | [Groq](https://console.groq.com/docs/overview), [Cerebras](https://inference-docs.cerebras.ai/), [SambaNova](https://docs.sambanova.ai/) | Latência e throughput dependem do modelo e da carga |
 | Demos e distribuição | [Hugging Face Hub/Spaces](https://huggingface.co/docs/hub/index), [Ollama library](https://ollama.com/library) | Hub distribui artefatos; Spaces hospeda apps; nenhum implica GPU gratuita ilimitada |
@@ -847,7 +867,7 @@ Antes de começar: confira preço zero da variante, elegibilidade da conta, cota
 
 ## 4. Exemplos práticos com arquitetura
 
-Os 14 cenários das seções 4.2 a 4.15 seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
+Os 15 cenários das seções 4.2 a 4.16 seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
 
 ### 4.1 Configuração
 
@@ -952,6 +972,8 @@ if __name__ == "__main__":
 
 </details>
 
+**Preparar documentos com AnyDoc:** por exemplo, `npx @firecrawl/anydoc slides.pptx -o slides.md` converte uma apresentação antes da ingestão. Confira títulos, tabelas e ordem de leitura contra o original e só então fragmente/indexe o Markdown. O caminho local não faz OCR por si só; `--ocr hosted` muda o processamento para um serviço externo. [CLI e formatos oficiais](https://github.com/firecrawl/anydoc).
+
 ### 4.3 Fine-tuning com LoRA
 
 **Caso de uso revisado:** classificar chamados internos ou padronizar respostas. O exemplo antigo de diagnóstico médico foi retirado porque atribuía probabilidade clínica sem calibração ou evidência.
@@ -996,6 +1018,8 @@ Um grafo fixo `retrieve → generate` é RAG em duas etapas, não se torna agent
 OpenCode e Kilo podem ser iniciados no diretório do projeto com `opencode` e `kilo`. Use `/models` para selecionar a oferta gratuita. Pi/OMP exigem configurar o provider; os comandos de autenticação e instalação devem seguir a versão atual de cada projeto. Nenhuma receita pressupõe que “open source” inclua créditos de inferência.
 
 Para automatizar a troca autor–revisor, siga o [loop da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor). As receitas foram conferidas com a documentação; contas, cotas e chamadas reais a esses serviços não foram exercitadas nesta revisão.
+
+**Outra opção de harness:** com Node.js e provider configurados, o quickstart do [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) usa `npx @deepseek-ai/dsh web` e abre o ambiente web local. Peça uma alteração pequena, acompanhe plano/ferramentas e confira o diff/testes. É um developer preview; registre a versão usada antes de automatizar. Omarchy é uma opção de ambiente Linux para hospedar essas ferramentas, não um requisito nem o controlador da tarefa.
 
 ### 4.6 Aplicação visual com Dify
 
@@ -1270,7 +1294,7 @@ async def chat(websocket: WebSocket):
 
 **Caso:** um agente implementa, outro analisa o código produzido e devolve problemas para a próxima correção. Esse padrão é conhecido como *generator–evaluator* ou *evaluator–optimizer*. É uma aplicação direta de orquestração; precisa estar no canivete como receita de trabalho, além da lista de ferramentas.
 
-Comece com **dois agentes + uma camada de coordenação existente + testes reais**. OpenClaw pode coordenar CLIs externos por ACPX; Hermes oferece delegação nativa e skills para alguns CLIs. O coordenador organiza a ordem e encaminha o feedback. Um controlador em código é uma alternativa quando você precisa impor condições e limites determinísticos; não é requisito para começar.
+Comece com **dois agentes + uma camada de coordenação existente + testes reais**. Claudex Loop já organiza implementação e inspeção entre Claude Code e Codex; Orca oferece trabalhadores supervisionados para diferentes CLIs; Herdr coordena terminais e comunicação. OpenClaw pode coordenar CLIs externos por ACPX; Hermes oferece delegação nativa e skills para alguns CLIs. O coordenador organiza a ordem e encaminha o feedback. Um controlador em código é uma alternativa quando você precisa impor condições e limites determinísticos; não é requisito para começar.
 
 | Participante | Função | Entrega |
 | --- | --- | --- |
@@ -1365,6 +1389,32 @@ Defina no código um teto de rodadas, tempo e custo; uma instrução de prompt n
 
 Essas combinações são receitas de integração, não garantia de interoperabilidade automática. Cada cliente precisa receber a tarefa, acessar a revisão certa e devolver um resultado estruturado. Para experimentar, comece com os dois papéis dentro de OpenCode, Kilo ou OMP; misture clientes quando precisar de uma segunda implementação ou provider. Todos os papéis devem usar ofertas gratuitas explicitamente, inclusive planejamento, resumo e revisão.
 
+#### Caminho pronto: Claudex Loop com Claude Code e Codex
+
+Com os dois CLIs instalados e autenticados e Python 3.10+, instale pelo marketplace do Claude Code, usando seus comandos internos:
+
+```text
+/plugin marketplace add chaseai-yt/claudex-loop
+/plugin install claudex-loop@claudex-loop
+```
+
+Invoque `/claudex-loop:claudex-loop` e forneça a tarefa, arquivos pertinentes, comando real de testes e critérios de conclusão. Por exemplo: “Corrigir a paginação de clientes; preservar os filtros; Claude implementa (`builder=claude`) e Codex faz inspeção independente; devolver achados para correção e executar os testes do projeto”. O fluxo inclui revisão do plano, construção e inspeção; configure os limites de rodadas da versão instalada. O agente coordenador recebe resultados e conduz as correções. Confirme o modelo efetivo em cada CLI: selecionar um modelo no coordenador não configura automaticamente o outro.
+
+Isso resolve diretamente o caso de um agente codificar e outro validar com ferramentas distintas. **Não pressupõe acesso gratuito a Claude/Codex.** Para revisão isolada de plano, o projeto também documenta pedidos como `claudex this plan, mode=review, plan=docs/migration.md, rounds=3`; o arquivo deve existir. [Instalação e ciclo oficiais](https://github.com/chaseai-yt/claudex-loop).
+
+#### Vários CLIs: Orca ou Herdr
+
+No Orca, instale/configure os agentes e habilite a camada de orquestração em Settings → Experimental, conforme o guia consultado. Confira o runtime e carregue as instruções da versão instalada:
+
+```bash
+orca status --json
+orca skills get orchestration --full
+```
+
+Peça ao coordenador para criar um Run com duas tarefas encadeadas: OpenCode implementa e registra a revisão Git; outro agente habilitado inspeciona essa mesma revisão, executa os testes e devolve achados. O fluxo documentado usa `run-create`, `task-create` e `worker-start`; acompanhe os IDs de tarefa/dispatch, as mensagens de conclusão e o resultado dos testes antes de iniciar a próxima etapa. Uma tarefa corretiva volta ao autor e exige nova inspeção. O comando antigo `orca orchestration run` foi aposentado e não executa esse fluxo. [Guia oficial de orquestração](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/orchestration.mdx).
+
+Com Herdr, use um painel para o coordenador e painéis separados para autor e revisor, por exemplo OpenCode e Codex, ou outros CLIs efetivamente instalados. A [CLI para agentes](https://herdr.dev/docs/agent-skill/) permite criar painéis, enviar prompts e acompanhar o trabalho; configure a ordem autor → testes → revisor → correção, revisão Git e limite de ciclos. Herdr fornece o ambiente e a comunicação; abrir dois terminais sozinho não implementa as condições de saída. Para preservar a premissa gratuita, escolha CLIs/providers elegíveis em todos os papéis.
+
 #### Exemplo: OpenClaw coordena OpenCode e Kilo Code
 
 Com OpenClaw já instalado, instale e habilite o plugin oficial:
@@ -1410,7 +1460,7 @@ Fontes: [skills incluídas](https://hermes-agent.nousresearch.com/docs/reference
 
 #### Ferramentas para montar essa orquestração
 
-Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos de orquestração](#211-orquestração-projetos-com-adoção-ampla): OpenClaw, Hermes, Ruflo/Claude Flow, OpenHands, CrewAI e LangGraph. Eles têm papéis diferentes; escolha conforme a necessidade de coordenar CLIs existentes ou implementar um workflow próprio.
+Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos de orquestração](#211-orquestração-projetos-com-adoção-ampla): Orca, Herdr, Claudex Loop, OpenClaw, Hermes, Ruflo/Claude Flow, OpenHands, CrewAI e LangGraph. Eles têm papéis diferentes; escolha conforme a necessidade de coordenar CLIs existentes ou implementar um workflow próprio.
 
 | Caminho | O que resolve | Quando escolher |
 | --- | --- | --- |
@@ -1424,7 +1474,7 @@ Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos
 | [Codex + Agents SDK/MCP](https://developers.openai.com/cookbook/examples/codex/codex_mcp_agents_sdk/building_consistent_workflows_codex_cli_agents_sdk) | Integrar um agente que realmente trabalha no repositório a um controlador | Automatizar edição/testes e coordenar papéis em código |
 | [CrewAI](https://docs.crewai.com/en/concepts/processes) | Papéis, tarefas e processo de equipe | Uma equipe com delegação e responsabilidades; configure o ciclo de correção explicitamente |
 
-**Para começar:** se você já trabalha em um agente de código que oferece subagentes, use um revisor com ferramentas de leitura e deixe a escrita com o autor. Para coordenar clientes diferentes, verifique primeiro OpenClaw/ACPX; para delegação nativa e os CLIs incluídos, avalie Hermes. Use um workflow ou controlador próprio quando precisar impor regras que a configuração existente não ofereça; LangGraph ajuda com ramificações e retomada. Uma equipe hierárquica, por si só, não garante o loop nem suas condições de saída.
+**Para começar:** se você já trabalha em um agente de código que oferece subagentes, use um revisor com ferramentas de leitura e deixe a escrita com o autor. Para coordenar clientes diferentes, avalie Orca para supervisão de trabalhadores, Herdr para coordenação de terminais ou OpenClaw/ACPX; se já usa Claude Code e Codex, Claudex Loop traz o ciclo específico pronto. Para delegação nativa e os CLIs incluídos, avalie Hermes. Use um workflow ou controlador próprio quando precisar impor regras que a configuração existente não ofereça; LangGraph ajuda com ramificações e retomada. Uma equipe hierárquica, por si só, não garante o loop nem suas condições de saída.
 
 Você pode usar o mesmo modelo nos dois agentes, em sessões separadas, ou combinar agentes/provedores diferentes. Modelos distintos podem trazer perspectivas diferentes, mas não garantem independência ou correção. Para misturar dois agentes de código, priorize conectores existentes como ACPX ou as skills incluídas do coordenador. Crie um adaptador somente quando a ferramenta desejada não tiver integração compatível.
 
@@ -1447,6 +1497,7 @@ Esta é uma receita de arquitetura; o loop de edição real de um repositório n
 | Navegador atual | Nanobrowser: abrir páginas de teste no Chrome/Edge → configurar modelo → pedir comparação de itens → salvar CSV | Conferir linhas e links contra as páginas e aprovar ações de envio conforme o modo escolhido |
 | Desktop | Agent S: seguir o quickstart da versão e configurar modelo principal/grounding; ou UFO² no Windows / Galaxy nos dispositivos configurados → copiar registros fictícios entre aplicações | Comparar origem e destino, tratar duplicatas e conferir o arquivo salvo; testar primeiro com dados de laboratório |
 | Android | Mika: configurar provider e controle do telefone → pedir busca/comparação em um app → receber o resultado | Confirmar que a tela de fundo contém o app esperado, conferir o resultado e assumir tarefas que exijam interação humana |
+| Telefone por agente de código | Phone Harness: conectar Android por ADB ou iPhone pelo espelhamento do Mac → seguir a integração do agente → pedir uma tarefa de teste, como abrir o relógio e configurar um alarme | Conferir capturas e estado final no aparelho. Não exige ESP32; não confundir o caminho local com os dispositivos/MCP do serviço Cloud |
 | iPhone físico | ESP32 iPhone Agent: instalar app/firmware → parear e calibrar → configurar modelo visual → pedir criação de um alarme de teste | Abrir o relógio e conferir hora/repetição. O hardware é necessário, e as telas não espelháveis não ficam visíveis ao agente |
 
 Exemplo de pedido adaptável: “Consulte os dez registros de teste, devolva identificador, valor e origem em CSV; informe campos ausentes e pare se o login expirar”. O executor precisa receber a URL/aplicação real e os critérios de conclusão. Não peça que um agente invente seletores ou alegue executar uma ferramenta não instalada. Para UI-TARS/Agent TARS, use o [registro histórico](#212-agentes-de-navegador-computador-e-celular) antes de reaproveitar um tutorial antigo.
@@ -1462,9 +1513,22 @@ Exemplo de pedido adaptável: “Consulte os dez registros de teste, devolva ide
 | Ação em aplicativo | Composio: conectar uma conta de teste → disponibilizar só as ferramentas da tarefa ao agente → criar um registro de laboratório | Identificador retornado pelo serviço e conferência no destino; o SDK não elimina autenticação nem a política de cobrança do serviço |
 | Evento de negócio | Activepieces ou Automatisch: webhook de teste → validar campos → transformar/classificar quando necessário → criar tarefa no app conectado | Histórico do fluxo e identificador no destino; impedir duplicação do mesmo evento |
 | Script recorrente | Windmill: cadastrar script e recursos → executar com entrada fictícia → publicar formulário/API ou agendamento | Saída, logs e artefato produzido; escolher a distribuição/licença correta para o uso |
+| Revisão editorial | no-ai-slop: revisar um texto existente preservando dados, fontes e intenção | Comparar o diff e conferir fatos/links separadamente; remover clichês não valida o conteúdo |
+| Documentação visual | Archify: ler os arquivos de um módulo → representar seus componentes e relações em HTML → exportar se necessário | Abrir o HTML e conferir cada relação contra o código; registrar arquivos e revisão usados |
 | Monitoramento | Huginn: receber eventos de RSS/webhook → filtrar os relevantes → reunir um resumo em destino de teste | Comparar eventos recebidos e selecionados; configurar etapa LLM somente se necessária |
 
 Para ofertas gratuitas hospedadas, configure todos os modelos envolvidos conforme a [seção 3.10](#310-modelos-gratuitos-hospedados), incluindo embeddings, resumos e trabalhadores. Acesso gratuito varia por provider e ferramenta; nem toda integração aceita o mesmo modelo. Essas receitas são pontos de partida documentais, sem implantação ou agendamento criado por este repositório.
+
+### 4.16 Produção e edição de vídeo com agentes
+
+**Caso:** entregar um vídeo de 60 segundos a partir de um roteiro e três clipes próprios, com montagem verificável. Use um agente com acesso a arquivos e terminal; os comandos de renderização dependem das ferramentas instaladas.
+
+| Caminho | Ferramenta e sequência | Como validar e controlar custo |
+| --- | --- | --- |
+| Produção por etapas | OpenMontage: entregar objetivo, roteiro, duração e mídia autorizada → escolher a rota de assets/áudio → montar → renderizar → examinar o resultado | Conferir fontes/licenças dos assets, duração, sincronismo e ausência de arquivos faltantes. Usar mídia própria reduz dependência de APIs; geração de voz, vídeo ou música via provider segue cobrança e cotas próprias |
+| Editar tomadas gravadas | video-use: apontar os arquivos de origem → definir cortes, pausas e ordem → gerar montagem → renderizar com FFmpeg → revisar | Conferir áudio, cortes, legendas e duração no arquivo final. A transcrição documentada usa ElevenLabs Scribe; substituir por um transcritor local seria uma adaptação, não uma integração gratuita pronta comprovada aqui |
+
+Pedido adaptável: “Monte 60 segundos usando apenas estes três arquivos e o roteiro fornecido; registre os trechos usados e entregue MP4, plano de edição e limitações. Antes de chamar qualquer serviço cobrado, apresente a alternativa e o custo previsto”. Abra o vídeo final e confira o áudio; o log de sucesso do render não demonstra qualidade editorial. Código aberto da ferramenta, licença de cada asset e custo do modelo são verificações diferentes. [OpenMontage](https://github.com/OpenMontageInc/OpenMontage) e [instalação do video-use](https://github.com/browser-use/video-use/blob/main/install.md).
 
 [↑ Índice](#índice)
 
@@ -1491,6 +1555,8 @@ Controles devem existir na aplicação e na infraestrutura. Instruir um modelo a
 | Backup e recuperação | Versionamento, restauração testada e política de exclusão | Recuperar estado/índice e verificar consistência de permissões |
 
 Ferramentas possíveis: [Presidio](https://microsoft.github.io/presidio/) para detecção de PII, [NeMo Guardrails](https://docs.nvidia.com/nemo/guardrails/latest/) e [Guardrails AI](https://github.com/guardrails-ai/guardrails) para controles de aplicação, [Promptfoo](https://www.promptfoo.dev/docs/intro/) para testes e [OpenTelemetry](https://opentelemetry.io/docs/) para instrumentação. Nenhuma ferramenta garante segurança completa ou conformidade por si só.
+
+**Skills de terceiros:** [SkillSpector, da NVIDIA](https://github.com/NVIDIA/SkillSpector), Apache-2.0, examina skills e outros artefatos de agentes em busca de riscos como prompt injection e exfiltração. Após instalar a CLI conforme o projeto, `skillspector scan ./minha-skill/ --no-llm --format json --output report.json` faz a análise sem a etapa LLM; o diretório deve existir. Revise achados e código antes de habilitar a skill. A análise com LLM exige provider e pode ter custo; um relatório sem achados não garante segurança.
 
 **Explicabilidade:** SHAP e LIME têm aplicações específicas em interpretação de modelos, mas não explicam automaticamente decisões de um agente generativo. Atenção visualizada e texto de raciocínio não devem ser tratados como prova causal de uma resposta.
 
@@ -1548,6 +1614,8 @@ Pontos de manutenção confirmados nas fontes oficiais:
 **Limitações:** o catálogo não cobre todos os lançamentos. As fontes oficiais podem mudar e variar por idioma; divergências encontradas no catálogo Gemini estão registradas na seção de modelos. Não foram medidos rankings, VRAM mínima, latência, ganhos de treino ou preços comparativos. Recursos dependentes de conta não foram confirmados com credenciais reais.
 
 **Cobertura dos 24 projetos sugeridos:** a descrição original do [vídeo indicado](https://www.youtube.com/watch?v=ywmiH9KzcvY) foi usada para identificar os repositórios; nomes, recursos, licenças e manutenção foram conferidos nos mantenedores. O nº 17 é OWL, o nº 20 é Automatisch e o nº 3 é Langflow. O vídeo é fonte de descoberta, não validação das capacidades. Os 18 projetos ausentes foram incorporados às seções correspondentes; os seis já presentes — smolagents, OpenAI Agents SDK, CrewAI, Langflow, Hermes e OpenClaw — permanecem no guia. Flowise também permanece como projeto distinto. UI-TARS Desktop/Agent TARS fica identificado como arquivado; Letta aponta para sua implementação atual. A ampliação cobre os 24 projetos, sem copiar a ordem por estrelas nem tratar tudo como orquestrador de código.
+
+**Nova seleção de 13 projetos:** DeepSeek Harness, Omarchy, Phone Harness, Herdr, Orca, Claudex Loop, SkillSpector, no-ai-slop, AnyDoc/Firecrawl, Archify, OpenMontage, video-use e OmniRoute foram distribuídos por função, com links dos mantenedores. Orca/Herdr/Claudex Loop ampliam os caminhos prontos para coordenação de agentes; Omarchy é ambiente Linux e OmniRoute é gateway. As licenças e requisitos foram consultados nos repositórios; os comandos são exemplos documentais, sem instalação ou integração autenticada destas ferramentas nesta revisão. Para OmniRoute com orçamento zero, limite a configuração a providers/modelos efetivamente gratuitos e remova fallback pago: o roteador não cria cotas nem altera os termos das contas.
 
 ### 6.4 Rotina sugerida de manutenção
 
