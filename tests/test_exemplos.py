@@ -2,7 +2,7 @@ import asyncio
 import os
 import unittest
 from types import SimpleNamespace
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 from fastapi.testclient import TestClient
 from langgraph.types import Command
 from pydantic import ValidationError
@@ -32,6 +32,32 @@ class RecuperacaoTests(unittest.TestCase):
         self.assertIn("[senha]", pedido["input"])
         self.assertNotIn("[devolucao]", pedido["input"])
         self.assertFalse(pedido["store"])
+
+    @patch.dict(os.environ, {"OPENAI_MODEL": "modelo-de-teste"})
+    def test_cliente_proprio_criado_uma_vez_e_fechado(self):
+        with patch("exemplos.rag.OpenAI") as factory:
+            api = factory.return_value.__enter__.return_value
+            api.responses.create.return_value = SimpleNamespace(status="completed", output_text="Resposta [senha].")
+            self.assertEqual(responder("senha"), "Resposta [senha].")
+            factory.assert_called_once_with(timeout=30.0, max_retries=1)
+            api.responses.create.assert_called_once()
+            factory.return_value.__exit__.assert_called_once_with(None, None, None)
+
+    @patch.dict(os.environ, {"OPENAI_MODEL": "modelo-de-teste"})
+    def test_cliente_proprio_fechado_em_falha_e_injetado_preservado(self):
+        with patch("exemplos.rag.OpenAI") as factory:
+            api = factory.return_value.__enter__.return_value
+            api.responses.create.side_effect = RuntimeError("falha simulada")
+            with self.assertRaises(RuntimeError):
+                responder("senha")
+            factory.return_value.__exit__.assert_called_once()
+        client = MagicMock()
+        client.responses.create.return_value = SimpleNamespace(status="completed", output_text="Resposta [senha].")
+        with patch("exemplos.rag.OpenAI") as factory:
+            responder("senha", client=client)
+            factory.assert_not_called()
+        client.__enter__.assert_not_called()
+        client.close.assert_not_called()
 
     @patch.dict(os.environ, {"OPENAI_MODEL": "modelo-de-teste"})
     def test_geracao_incompleta(self):
@@ -72,6 +98,33 @@ class ExtracaoTests(unittest.TestCase):
         dados["total"] = 30.0
         with self.assertRaises(ValidationError):
             Nota.model_validate(dados)
+
+    @patch.dict(os.environ, {"OPENAI_MODEL": "modelo-de-teste"})
+    def test_cliente_proprio_criado_uma_vez_e_fechado(self):
+        nota = Nota(numero=None, itens=[], total=None)
+        with patch("exemplos.extracao.OpenAI") as factory:
+            api = factory.return_value.__enter__.return_value
+            api.responses.parse.return_value = SimpleNamespace(status="completed", output_parsed=nota)
+            self.assertIs(extrair("sem itens"), nota)
+            factory.assert_called_once_with(timeout=30.0, max_retries=1)
+            api.responses.parse.assert_called_once()
+            factory.return_value.__exit__.assert_called_once_with(None, None, None)
+
+    @patch.dict(os.environ, {"OPENAI_MODEL": "modelo-de-teste"})
+    def test_cliente_proprio_fechado_em_falha_e_injetado_preservado(self):
+        with patch("exemplos.extracao.OpenAI") as factory:
+            api = factory.return_value.__enter__.return_value
+            api.responses.parse.side_effect = RuntimeError("falha simulada")
+            with self.assertRaises(RuntimeError):
+                extrair("texto")
+            factory.return_value.__exit__.assert_called_once()
+        client = MagicMock()
+        client.responses.parse.return_value = SimpleNamespace(status="completed", output_parsed=Nota(numero=None, itens=[], total=None))
+        with patch("exemplos.extracao.OpenAI") as factory:
+            extrair("texto", client=client)
+            factory.assert_not_called()
+        client.__enter__.assert_not_called()
+        client.close.assert_not_called()
 
     def test_quantidade_invalida(self):
         with self.assertRaises(ValidationError):

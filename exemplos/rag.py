@@ -1,5 +1,6 @@
 """RAG mínimo: busca lexical local seguida de geração via Responses API."""
 import argparse
+from contextlib import nullcontext
 from openai import OpenAI
 from exemplos.base import SEM_CONTEXTO, contexto, modelo_configurado, recuperar
 
@@ -15,16 +16,15 @@ def responder(pergunta: str, client=None) -> str:
     if not documentos:
         return SEM_CONTEXTO
     modelo = modelo_configurado()
-    # Cliente injetável permite verificar o fluxo sem rede ou credenciais reais.
-    if client is None:
-        with OpenAI(timeout=30.0, max_retries=1) as api:
-            return responder(pergunta, client=api)
-    resposta = client.responses.create(
-        model=modelo,
-        instructions=INSTRUCOES,
-        input=f"Documentos:\n{contexto(documentos)}\n\nPergunta: {pergunta}",
-        store=False,
-    )
+    # Fecha apenas o cliente criado aqui; o cliente injetado pertence ao chamador.
+    cliente = OpenAI(timeout=30.0, max_retries=1) if client is None else nullcontext(client)
+    with cliente as api:
+        resposta = api.responses.create(
+            model=modelo,
+            instructions=INSTRUCOES,
+            input=f"Documentos:\n{contexto(documentos)}\n\nPergunta: {pergunta}",
+            store=False,
+        )
     if resposta.status != "completed" or not resposta.output_text:
         raise RuntimeError("A geração não concluiu com saída textual; verifique status/recusa.")
     return resposta.output_text
