@@ -1,1 +1,9 @@
 .DS_Store
+
+# Ambiente dos exemplos e credenciais locais
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example

@@ -1,0 +1,10 @@
+# Dependências diretas verificadas em Python 3.12 nesta revisão.
+# Pinagem direta; as dependências transitivas não constituem um lock completo.
+openai==3.48.0
+langgraph==1.2.20
+pydantic==2.14.3
+fastapi==0.162.2
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+# Transporte simulado dos testes de integração com o SDK.
+httpx2==2.16.0
