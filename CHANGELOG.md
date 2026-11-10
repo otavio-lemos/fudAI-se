@@ -2,6 +2,14 @@
 
 **Estrutura atual proposta neste PR:** guia completo e sequencial no `README.md`, com exemplos executáveis em `exemplos/`. O conteúdo das oito páginas de `docs/` foi reunido no README; a divisão em páginas separadas foi substituída.
 
+## 2026-11-10 — verificação dos apontamentos de código e nomenclatura
+
+- Confirma os checkpoints Qwen3.8-27B, MiniMax-M3.1-Flash e GLM-5.3-Flash nas organizações oficiais; explicita a diferença entre checkpoint e ID de API.
+- Confirma que o fluxo original de cliente no RAG terminava, sem recursão infinita; simplifica RAG e extração para uma chamada sem recursão e preserva a propriedade do cliente injetado.
+- Acrescenta quatro testes de ciclo de vida dos clientes; os 18 testes passam sem chamadas externas.
+- Confirma o import de ferramentas no Agents SDK 0.24.0 e sua instalação opcional separada.
+- Reforça revisão Git, diretórios, caminhos relativos e validação do contrato no loop entre agentes.
+
 ## 2026-11-10 — auditoria e correções dos orquestradores
 
 - Documenta OpenClaw/ACPX e Hermes, com receita entre OpenCode e Kilo e alternativa com CLIs externos.

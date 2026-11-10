@@ -443,9 +443,9 @@ asyncio.run(main())
 
 </details>
 
-O orquestrador decide **qual papel chamar e qual tarefa enviar**; a aplicação impõe seis delegações e timeouts. Os limites de turnos de cada execução não equivalem a um teto global de tokens ou dinheiro. A regra de duas correções, neste exemplo, é instrução ao modelo; um sistema que precise garanti-la deve contar as rodadas no controlador. Timeout/limite gera exceção e exige tratamento na aplicação final.
+O orquestrador decide **qual papel chamar e qual tarefa enviar**; a aplicação impõe seis delegações e timeouts. O import `from agents.decorators import tool` foi executado com `openai-agents==0.24.0`; essa dependência opcional é instalada separadamente e não está em `exemplos/requirements.txt`. Os limites de turnos de cada execução não equivalem a um teto global de tokens ou dinheiro. A regra de duas correções, neste exemplo, é instrução ao modelo; um sistema que precise garanti-la deve contar as rodadas no controlador. Timeout/limite gera exceção e exige tratamento na aplicação final.
 
-**Escopo da verificação:** exemplo conferido com Agents SDK 0.24.0, incluindo criação dos especialistas, delegação, papel inválido e limite de chamadas com execução do modelo simulada; chamadas aos modelos não executadas. Não faz parte dos 14 testes dos exemplos anteriores. Fonte: [function tools e agentes como ferramentas](https://openai.github.io/openai-agents-python/tools/).
+**Escopo da verificação:** exemplo conferido com Agents SDK 0.24.0, incluindo criação dos especialistas, delegação, papel inválido e limite de chamadas com execução do modelo simulada; chamadas aos modelos não executadas. Não faz parte dos 18 testes dos exemplos anteriores. Fonte: [function tools e agentes como ferramentas](https://openai.github.io/openai-agents-python/tools/).
 
 [↑ Índice](#índice)
 
@@ -668,6 +668,8 @@ A edição anterior tratava GPT-4o, Claude 3.5, Gemini 1.5/2.0 e Grok 2 como ret
 
 ### 3.2 Pesos disponíveis: famílias e checkpoints recentes
 
+**Checkpoint e ID de API são identificadores diferentes.** `Qwen/Qwen3.8-27B` identifica os pesos publicados pela organização Qwen no Hub; não é um alias universal de API. O preset da seção 1.10 se refere a esse checkpoint. Use o ID que o endpoint escolhido documenta, sem converter nomes ou versões por semelhança. MiniMax-M3.1-Flash e GLM-5.3-Flash também são checkpoints publicados pelos mantenedores e linkados abaixo, não projeções.
+
 **B = bilhões; T = trilhões de parâmetros.** Valores abaixo são os declarados nas model cards, não estimativas de qualidade ou memória. Parâmetros ativos por token não representam o total de pesos que precisa ser armazenado.
 
 | Família / checkpoint oficial | Parâmetros / arquitetura declarados | O que acrescenta ao mapa |
@@ -743,7 +745,7 @@ Bark e PlayHT eram referências do guia anterior; avalie disponibilidade e manut
 | Tecnologia | Papel | Quando considerar |
 | --- | --- | --- |
 | [PostgreSQL + pgvector](https://github.com/pgvector/pgvector) | Dados relacionais e vetores | Aproveitar infraestrutura SQL existente e controles de acesso |
-| [Qdrant](https://qdrant.tech/documentation/), [Weaviate](https://docs.weaviate.io/), [Milvus](https://github.com/milvus-io/milvus) | Bancos com recursos de recuperação vetorial | Filtros, escala, operações e busca híbrida conforme produto |
+| [Qdrant](https://qdrant.tech/documentation/), [Weaviate](https://docs.weaviate.io/), [Milvus](https://milvus.io/docs/overview.md) | Bancos com recursos de recuperação vetorial | Filtros, escala, operações e busca híbrida conforme produto |
 | [Pinecone](https://docs.pinecone.io/), [Chroma](https://docs.trychroma.com/) | Recuperação gerenciada / desenvolvimento e deploy conforme edição | Consistência, isolamento, custo e perfil de carga |
 | [Elasticsearch](https://www.elastic.co/docs), [OpenSearch](https://docs.opensearch.org/) | Busca lexical, vetorial e híbrida | Bases com necessidade de termos exatos, filtros e agregações |
 | [Vespa](https://docs.vespa.ai/), [LanceDB](https://docs.lancedb.com/) | Busca/ranking e armazenamento vetorial | Ranking customizado ou integração com dados multimodais |
@@ -862,6 +864,7 @@ Fontes: [arquiteturas de recuperação](https://docs.langchain.com/oss/python/de
 ```python
 """RAG mínimo: busca lexical local seguida de geração via Responses API."""
 import argparse
+from contextlib import nullcontext
 from openai import OpenAI
 from exemplos.base import SEM_CONTEXTO, contexto, modelo_configurado, recuperar
 
@@ -877,16 +880,15 @@ def responder(pergunta: str, client=None) -> str:
     if not documentos:
         return SEM_CONTEXTO
     modelo = modelo_configurado()
-    # Cliente injetável permite verificar o fluxo sem rede ou credenciais reais.
-    if client is None:
-        with OpenAI(timeout=30.0, max_retries=1) as api:
-            return responder(pergunta, client=api)
-    resposta = client.responses.create(
-        model=modelo,
-        instructions=INSTRUCOES,
-        input=f"Documentos:\n{contexto(documentos)}\n\nPergunta: {pergunta}",
-        store=False,
-    )
+    # Fecha apenas o cliente criado aqui; o cliente injetado pertence ao chamador.
+    cliente = OpenAI(timeout=30.0, max_retries=1) if client is None else nullcontext(client)
+    with cliente as api:
+        resposta = api.responses.create(
+            model=modelo,
+            instructions=INSTRUCOES,
+            input=f"Documentos:\n{contexto(documentos)}\n\nPergunta: {pergunta}",
+            store=False,
+        )
     if resposta.status != "completed" or not resposta.output_text:
         raise RuntimeError("A geração não concluiu com saída textual; verifique status/recusa.")
     return resposta.output_text
@@ -1067,6 +1069,7 @@ Fontes: [structured outputs](https://developers.openai.com/api/docs/guides/struc
 
 ```python
 """Extração de um texto fictício com schema nativo e validação de negócio."""
+from contextlib import nullcontext
 from decimal import Decimal
 from typing import Self
 from openai import OpenAI
@@ -1099,17 +1102,17 @@ class Nota(BaseModel):
 
 def extrair(texto: str, client=None) -> Nota:
     modelo = modelo_configurado()
-    if client is None:
-        with OpenAI(timeout=30.0, max_retries=1) as api:
-            return extrair(texto, client=api)
-    resposta = client.responses.parse(
-        model=modelo,
-        instructions=("Extraia apenas campos explícitos. Use null se número ou total não constarem. "
-                      "Não invente itens. O exemplo não inclui descontos, impostos ou frete."),
-        input=texto,
-        text_format=Nota,
-        store=False,
-    )
+    # Fecha apenas o cliente criado aqui; o cliente injetado pertence ao chamador.
+    cliente = OpenAI(timeout=30.0, max_retries=1) if client is None else nullcontext(client)
+    with cliente as api:
+        resposta = api.responses.parse(
+            model=modelo,
+            instructions=("Extraia apenas campos explícitos. Use null se número ou total não constarem. "
+                          "Não invente itens. O exemplo não inclui descontos, impostos ou frete."),
+            input=texto,
+            text_format=Nota,
+            store=False,
+        )
     if resposta.status != "completed" or resposta.output_parsed is None:
         raise RuntimeError("Sem extração válida: verifique recusa, truncamento ou resposta incompleta.")
     return resposta.output_parsed
@@ -1273,6 +1276,10 @@ Use um contrato estruturado, em vez de um texto solto como “pode melhorar”. 
   ]
 }
 ```
+
+O diff deve vir do Git sobre a revisão identificada, não de um patch reconstituído pelo modelo. No exemplo local OpenClaw, autor e revisor usam o mesmo checkout, com `cwd` explícito e execução sequencial; no caso de worktrees ou hosts diferentes, materialize o mesmo commit e alterações pendentes antes da revisão. Padronize caminhos relativos à raiz do repositório: não reutilize caminhos absolutos do workspace de outro agente.
+
+Valide o schema, os valores permitidos e a revisão do parecer no controlador; rejeite caminhos fora do repositório e não aplique patches vindos do texto da revisão automaticamente. JSON válido não garante patch válido nem correção técnica. O prompt do exemplo OpenClaw não implementa sozinho essa validação.
 
 O autor responde a cada ID: corrigido, não aplicável com evidência ou pendente. O revisor verifica a correção, sem inventar novas exigências fora da tarefa. Não exija um número mínimo de defeitos: se não encontrar problema sustentado, ele deve poder aprovar.
 
@@ -1457,7 +1464,7 @@ Pontos de manutenção confirmados nas fontes oficiais:
 - [TGI em manutenção](https://huggingface.co/docs/inference-endpoints/engines/tgi), com alternativas vLLM/SGLang nos Inference Endpoints.
 - [Proxy OpenAI-compatible legado do Helicone](https://docs.helicone.ai/getting-started/integration-method/openai-proxy), com orientação para [AI Gateway](https://docs.helicone.ai/gateway/overview).
 
-**Auditoria do PR:** conferidos os 300 destinos HTTP(S) únicos então presentes: 298 responderam, Milvus apresentou ciclo de redirecionamento (link substituído pelo repositório oficial) e Neo4j respondeu 403 ao script, mas abriu na pesquisa web. Âncoras e arquivos locais foram verificados; os cinco blocos Python passaram por análise de sintaxe e os quatro exemplos completos coincidem com os arquivos executáveis. Os 14 testes offline passaram; a construção do exemplo Agents SDK também foi exercitada com execução de modelo simulada. Isso não comprova chamadas autenticadas nem qualidade dos modelos remotos.
+**Auditoria do PR:** conferidos os 300 destinos HTTP(S) únicos então presentes: 298 responderam, Milvus apresentou ciclo de redirecionamento (endereço corrigido) e Neo4j respondeu 403 ao script, mas abriu na pesquisa web. Âncoras e arquivos locais foram verificados; os cinco blocos Python passaram por análise de sintaxe e os quatro exemplos completos coincidem com os arquivos executáveis. Os 18 testes offline passaram, incluindo criação e fechamento de clientes próprios e preservação dos clientes injetados; a construção do exemplo Agents SDK também foi exercitada com execução de modelo simulada. Isso não comprova chamadas autenticadas nem qualidade dos modelos remotos.
 
 **Limitações:** o catálogo não cobre todos os lançamentos. As fontes oficiais podem mudar e variar por idioma; divergências encontradas no catálogo Gemini estão registradas na seção de modelos. Não foram medidos rankings, VRAM mínima, latência, ganhos de treino ou preços comparativos. Recursos dependentes de conta não foram confirmados com credenciais reais.
 

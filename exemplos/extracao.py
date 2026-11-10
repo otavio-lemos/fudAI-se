@@ -1,4 +1,5 @@
 """Extração de um texto fictício com schema nativo e validação de negócio."""
+from contextlib import nullcontext
 from decimal import Decimal
 from typing import Self
 from openai import OpenAI
@@ -31,17 +32,17 @@ class Nota(BaseModel):
 
 def extrair(texto: str, client=None) -> Nota:
     modelo = modelo_configurado()
-    if client is None:
-        with OpenAI(timeout=30.0, max_retries=1) as api:
-            return extrair(texto, client=api)
-    resposta = client.responses.parse(
-        model=modelo,
-        instructions=("Extraia apenas campos explícitos. Use null se número ou total não constarem. "
-                      "Não invente itens. O exemplo não inclui descontos, impostos ou frete."),
-        input=texto,
-        text_format=Nota,
-        store=False,
-    )
+    # Fecha apenas o cliente criado aqui; o cliente injetado pertence ao chamador.
+    cliente = OpenAI(timeout=30.0, max_retries=1) if client is None else nullcontext(client)
+    with cliente as api:
+        resposta = api.responses.parse(
+            model=modelo,
+            instructions=("Extraia apenas campos explícitos. Use null se número ou total não constarem. "
+                          "Não invente itens. O exemplo não inclui descontos, impostos ou frete."),
+            input=texto,
+            text_format=Nota,
+            store=False,
+        )
     if resposta.status != "completed" or resposta.output_parsed is None:
         raise RuntimeError("Sem extração válida: verifique recusa, truncamento ou resposta incompleta.")
     return resposta.output_parsed
