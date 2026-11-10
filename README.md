@@ -13,7 +13,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 1. [Conceitos fundamentais de IA](#1-conceitos-fundamentais-de-ia) — arquiteturas, RAG, treinamento, prompts, métricas e parâmetros.
 2. [Ferramentas e frameworks](#2-ferramentas-e-frameworks) — agentes, execução local, automação, código e infraestrutura.
 3. [Recursos, serviços e APIs](#3-recursos-serviços-e-apis) — modelos atuais, embeddings, imagem, vídeo, voz, bancos e hospedagem.
-4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — os 11 casos de aplicação, comandos e códigos.
+4. [Exemplos práticos com arquitetura](#4-exemplos-práticos-com-arquitetura) — 12 casos de aplicação, comandos e códigos.
 5. [Segurança e governança](#5-segurança-e-governança) — controles para dados, ferramentas e aplicações.
 6. [Metodologia e fontes](#6-metodologia-e-fontes) — referências e critérios de manutenção.
 
@@ -30,6 +30,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 | Escolher ferramentas para programar com IA | [2.7 Programação](#27-programação-assistida-por-ia) |
 | Entender agentes que trabalham sozinhos e coordenam outros | [1.15 Agentes e orquestração](#115-agentes-autônomos-subagentes-e-orquestração) |
 | Fazer dois agentes de código revisarem e corrigirem em loop | [4.13 Autor e revisor](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) |
+| Escolher um orquestrador pronto para agentes de código | [2.11 Orquestração](#211-orquestração-projetos-com-adoção-ampla) |
 | Criar especialistas por função | [1.16 Exemplo de orquestrador](#116-exemplo-orquestrador-que-cria-especialistas-por-função) |
 | Escolher modelos gratuitos sem GPU local | [3.10 Modelos gratuitos hospedados](#310-modelos-gratuitos-hospedados) |
 | Montar uma aplicação de verdade | [4. Exemplos](#4-exemplos-práticos-com-arquitetura) |
@@ -475,7 +476,7 @@ Cada nome leva ao projeto ou à documentação oficial. A seleção mapeia funç
 | [Instructor](https://python.useinstructor.com/) / [Outlines](https://dottxt-ai.github.io/outlines/) | Extração validada / geração controlada | Schemas e restrições de saída, conforme o backend |
 | [FastAPI](https://fastapi.tiangolo.com/) | Framework de API, não framework de agentes | Expor serviços HTTP/WebSocket |
 
-**Mudança de manutenção:** o [AutoGen](https://github.com/microsoft/autogen) foi arquivado; o projeto orienta novos usuários ao Microsoft Agent Framework. Não o apresente como escolha atual para novos sistemas sem considerar essa condição.
+**Mudança de manutenção:** o README oficial do [AutoGen](https://github.com/microsoft/autogen) declara o projeto arquivado e sem manutenção; orienta novos usuários ao Microsoft Agent Framework. Não o apresente como escolha atual para novos sistemas sem considerar essa condição.
 
 ### 2.2 Protocolos, contexto e execução de ferramentas
 
@@ -483,6 +484,7 @@ Cada nome leva ao projeto ou à documentação oficial. A seleção mapeia funç
 | --- | --- | --- |
 | [MCP](https://modelcontextprotocol.io/docs/learn/architecture) | Conectar hosts a servidores com ferramentas, recursos e prompts | Transporte padronizado não torna ferramenta confiável |
 | [A2A](https://a2a-protocol.org/latest/) | Comunicação entre agentes | Complementa integrações de ferramentas; não é outro nome para MCP |
+| [Agent Client Protocol — ACP](https://agentclientprotocol.com/) | Comunicação entre clientes e agentes de código | Usado pelas integrações externas de OpenClaw/OpenHands; não confundir com o Agent Communication Protocol, que também usou a sigla ACP |
 | [Skills do Claude](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) | Instruções e recursos reutilizáveis carregados conforme a tarefa | Formato e execução dependem do host; leia permissões dos scripts |
 | [Playwright](https://playwright.dev/python/) | Automação de navegador com código | Preferível para passos conhecidos e verificáveis |
 | [Browser Use](https://github.com/browser-use/browser-use) | Navegação orientada por agentes | Útil para interfaces variáveis; exige limites e validação de resultado |
@@ -558,7 +560,7 @@ A ferramenta executa o trabalho; o provider fornece o modelo. **Não é necessá
 | [Kilo Code](https://github.com/Kilo-Org/kilocode) | Agente aberto para IDE e CLI; código sob MIT | Usar `kilo-auto/free` ou um modelo marcado free; agente Code implementa e um subagente de revisão analisa o diff |
 | [Pi](https://github.com/earendil-works/pi) | Harness de código aberto, MIT, extensível por SDK, RPC e pacotes | Conectar um provider como OpenRouter e selecionar um modelo gratuito; duas sessões controladas por um programa podem exercer autor e revisor |
 | [Oh My Pi — OMP](https://github.com/can1357/oh-my-pi) | Fork de Pi, MIT, com subagentes e revisão integrados | Configurar OpenRouter com modelo gratuito; usar delegação por `task` e revisão com `/review`, conforme versão |
-| [Antigravity CLI — agy](https://antigravity.google/docs/getting-started) | Agente de código no terminal, com recursos do ecossistema Antigravity | Usar modelo incluído no plano gratuito, como Gemini 3.8 Flash na consulta de 10/11/2026; cotas e acesso são definidos pela conta |
+| [Antigravity CLI — agy](https://antigravity.google/docs/getting-started/) | Agente de código no terminal, com recursos do ecossistema Antigravity | Usar modelo incluído no plano gratuito, como Gemini 3.8 Flash na consulta de 10/11/2026; cotas e acesso são definidos pela conta |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Agente aberto no terminal | Acesso gratuito conforme autenticação, elegibilidade e cotas vigentes; não equivale a uso ilimitado |
 | [Aider](https://aider.chat/docs/), [Continue](https://docs.continue.dev/) | Edição assistida / integração extensível | Conectar um endpoint compatível com modelos gratuitos ou locais; conferir tool calling e formato exigidos |
 | [Codex](https://developers.openai.com/learn/codex), [Claude Code](https://code.claude.com/docs/en/overview) | Outras opções de agentes e integração | Referências complementares; não são a premissa de custo dos exemplos gratuitos deste guia |
@@ -618,7 +620,7 @@ Para escolher a base de um sistema, diferencie plataforma de desenvolvimento, fr
 | Projeto | Estrelas em 10/11/2026, aproximadamente | Licença | Papel e encaixe no loop |
 | --- | --- | --- | --- |
 | [Ruflo, anteriormente Claude Flow](https://github.com/ruvnet/ruflo) | 81,4 mil | MIT | Camada de coordenação com agentes especializados, memória e workflows; documenta integração com diferentes ambientes de código. Candidato para coordenar implementação, revisão e testes; confirmar o adaptador de cada ferramenta na versão escolhida |
-| [OpenHands](https://github.com/OpenHands/OpenHands) | 93,1 mil | MIT no repositório principal | Plataforma de desenvolvimento por agentes, com execução de código e ecossistema próprio. Avaliar para trabalho autônomo no repositório; não equivale automaticamente a um conector entre quaisquer CLIs |
+| [OpenHands](https://github.com/OpenHands/OpenHands) | 93,1 mil | MIT no repositório principal | Plataforma de desenvolvimento; Agent Canvas/Agent Server já oferecem agentes externos por ACP, incluindo OpenCode e Pi em backends locais/self-hosted. O SDK inclui uma receita de implementação–crítica–correção com agentes OpenHands |
 | [CrewAI](https://github.com/crewAIInc/crewAI) | 60,7 mil | MIT | Framework de equipes com papéis, tarefas e Flows. Permite construir autor, revisor e retorno de feedback; ferramentas de edição/testes e condições do loop precisam ser configuradas |
 | [LangGraph](https://github.com/langchain-ai/langgraph) | 44,7 mil | MIT | Framework de grafos com estado, persistência e ciclos. Adequado para controlar implementação, avaliação e correção; os adaptadores dos agentes continuam sendo parte da integração |
 | [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) | 14,6 mil | MIT | Framework de agentes e workflows em Python/.NET; alternativa do ecossistema Microsoft para orquestração programável |
@@ -630,9 +632,11 @@ Contagens consultadas pela API GitHub; os cinco repositórios estavam ativos e n
 | Projeto | Recurso existente | Como usar no cenário autor–revisor |
 | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Plugin oficial `@openclaw/acpx` para sessões de agentes externos; o catálogo documenta OpenCode, Kilo Code, Claude Code, Gemini CLI e Codex, entre outros | O coordenador inicia o implementador, acompanha a sessão e envia a revisão a outro agente. Configure os alvos permitidos, autenticação e regras do ciclo |
-| [Hermes Agent, da Nous Research](https://github.com/NousResearch/hermes-agent) | `delegate_task` cria subagentes com conversa, terminal e ferramentas próprios; skills incluídas delegam tarefas aos CLIs Claude Code e Codex | Use um especialista para implementar e outro, com contexto novo, para revisar; o agente principal recebe os resultados e encaminha as correções |
+| [Hermes Agent, da Nous Research](https://github.com/NousResearch/hermes-agent) | `delegate_task` cria subagentes com conversa e sessão de terminal próprias; o diretório é compartilhado por padrão. Skills incluídas delegam tarefas aos CLIs Claude Code e Codex | Use um especialista para implementar e outro, com contexto novo, para revisar; o agente principal recebe os resultados e encaminha as correções |
 
 **Para o cenário deste guia:** quando a prioridade for coordenar CLIs diferentes, comece verificando o OpenClaw com ACPX e os alvos documentados. Hermes oferece delegação nativa e instruções prontas para alguns CLIs externos; isso não implica suporte incluído a qualquer CLI. Ruflo é outra camada de coordenação; OpenHands é uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph atendem workflows programáveis em uma aplicação própria. A [receita da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) mostra como aplicar os papéis e o retorno de feedback.
+
+OpenHands: [agentes externos por ACP](https://github.com/OpenHands/OpenHands/blob/main/docs/ACP_AGENTS.md) e [exemplo oficial de refinamento iterativo](https://docs.openhands.dev/sdk/guides/iterative-refinement). São recursos diferentes: o exemplo do SDK usa agentes OpenHands e não comprova um loop pronto entre quaisquer CLIs externos. OpenHands Cloud oferece Claude Code, Codex e Gemini CLI; Pi/OpenCode exigem backend local ou self-hosted.
 
 Fontes oficiais: [OpenClaw: ACP e subagentes](https://docs.openclaw.ai/tools/acp-agents), [instalação e alvos ACPX](https://docs.openclaw.ai/tools/acp-agents/quickstart), [Hermes: catálogo incluído](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) e [padrões de delegação](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns).
 
@@ -652,8 +656,8 @@ As tabelas abaixo registram exemplos identificáveis e links oficiais na data da
 | --- | --- | --- |
 | GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna | `gpt-6-astra`, `gpt-6.1-sol`, `gpt-6.1-terra`, `gpt-6-luna` · [OpenAI](https://developers.openai.com/api/docs/models) | Diferentes perfis de capacidade, custo e latência; confira esforço de raciocínio e ferramentas por modelo |
 | Claude Fable 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5 | `claude-fable-5-2`, `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5` · [Anthropic](https://platform.claude.com/docs/en/models/overview) | Thinking adaptativo e tool use conforme modelo/plataforma; IDs em clouds podem diferir |
-| Gemini 3.8 Flash e família Gemini 3 | `gemini-3.8-flash` · [Google](https://ai.google.dev/gemini-api/docs/models?authuser=002) | Texto, multimodalidade e ferramentas conforme variante; Live, imagem e TTS têm endpoints próprios |
-| Gemini 4 Argon | `gemini-4-argon` · [tabela oficial de preços](https://ai.google.dev/gemini-api/docs/pricing?frmapp=yes) | Presente na página de preços consultada; disponibilidade e limites devem ser conferidos na conta/API antes de migrar |
+| Gemini 3.8 Flash e família Gemini 3 | `gemini-3.8-flash` · [Google](https://aistudio.google.com/docs/models) | Texto, multimodalidade e ferramentas conforme variante; Live, imagem e TTS têm endpoints próprios |
+| Gemini 4 Argon | `gemini-4-argon` · [tabela oficial de preços](https://aistudio.google.com/docs/pricing) | Presente na página de preços consultada; disponibilidade e limites devem ser conferidos na conta/API antes de migrar |
 | Grok 4.7 | [Catálogo xAI](https://docs.x.ai/developers/models) | Raciocínio e ferramentas; acesso a busca na web/X depende das ferramentas habilitadas |
 | Mistral Large 4 e especialistas | `mistral-large-4` · [Mistral](https://docs.mistral.ai/) | Generalistas e modelos especializados em código, OCR e áudio conforme catálogo |
 | Command e modelos Cohere | [Cohere](https://docs.cohere.com/docs/models) | Geração, ferramentas, busca e documentos; modelos de embedding/rerank são produtos distintos |
@@ -739,7 +743,7 @@ Bark e PlayHT eram referências do guia anterior; avalie disponibilidade e manut
 | Tecnologia | Papel | Quando considerar |
 | --- | --- | --- |
 | [PostgreSQL + pgvector](https://github.com/pgvector/pgvector) | Dados relacionais e vetores | Aproveitar infraestrutura SQL existente e controles de acesso |
-| [Qdrant](https://qdrant.tech/documentation/), [Weaviate](https://docs.weaviate.io/), [Milvus](https://milvus.io/docs) | Bancos com recursos de recuperação vetorial | Filtros, escala, operações e busca híbrida conforme produto |
+| [Qdrant](https://qdrant.tech/documentation/), [Weaviate](https://docs.weaviate.io/), [Milvus](https://github.com/milvus-io/milvus) | Bancos com recursos de recuperação vetorial | Filtros, escala, operações e busca híbrida conforme produto |
 | [Pinecone](https://docs.pinecone.io/), [Chroma](https://docs.trychroma.com/) | Recuperação gerenciada / desenvolvimento e deploy conforme edição | Consistência, isolamento, custo e perfil de carga |
 | [Elasticsearch](https://www.elastic.co/docs), [OpenSearch](https://docs.opensearch.org/) | Busca lexical, vetorial e híbrida | Bases com necessidade de termos exatos, filtros e agregações |
 | [Vespa](https://docs.vespa.ai/), [LanceDB](https://docs.lancedb.com/) | Busca/ranking e armazenamento vetorial | Ranking customizado ou integração com dados multimodais |
@@ -784,9 +788,9 @@ Aqui “gratuito” significa uma oferta de inferência sem cobrança de tokens 
 | [OpenRouter: variantes gratuitas](https://openrouter.ai/collections/free-models/) | IDs completos terminados em `:free`; conferir o catálogo atual | Fixar um ID para autor e outro para revisor, quando disponíveis; verificar suporte a ferramentas |
 | [Antigravity / agy](https://antigravity.google/docs/models/) | Modelo incluído no plano Free; Gemini 3.8 Flash consta na página consultada | Autenticar no próprio agy e selecionar o modelo elegível na conta; conferir [plano e cotas](https://antigravity.google/docs/plans/) |
 
-Para modelos gratuitos no OpenRouter, use a própria chave OpenRouter; não é necessário adquirir uma chave do fabricante do modelo. A documentação distingue variantes `:free`, sujeitas a cotas, de outros modelos com preço zero que podem ter requisitos de saldo. “Go” do OpenCode é uma assinatura: não confunda o plano com suas promoções de modelos gratuitos.
+Para modelos gratuitos no OpenRouter, use a própria chave OpenRouter; não é necessário adquirir uma chave do fabricante do modelo. A documentação distingue variantes `:free`, sujeitas a cotas, de outros modelos com preço zero que podem ter requisitos de saldo. “Go” do OpenCode é uma assinatura: não confunda o plano com suas promoções de modelos gratuitos. Os modelos Free do Console são restritos ao uso pelo OpenCode; não presuma que a mesma oferta possa ser chamada diretamente pelo Hermes, Pi ou outro cliente. Delegar ao CLI OpenCode é diferente de usar o endpoint gratuito por outro cliente.
 
-No Kilo, configure também o modelo pequeno usado em tarefas de fundo e o autocomplete: selecionar um modelo principal gratuito não torna todos os recursos automaticamente gratuitos. Para loops reproduzíveis, prefira IDs fixos quando possível; `kilo-auto/free` e `openrouter/free` podem trocar o modelo subjacente. Se houver indisponibilidade, pause ou selecione outra opção gratuita explicitamente, sem fallback pago automático.
+No Kilo e no OpenCode, confira também os modelos usados para títulos, resumos e outras tarefas de fundo. No Kilo, confira ainda o autocomplete: selecionar um modelo principal gratuito não torna todos os recursos automaticamente gratuitos. Para loops reproduzíveis, prefira IDs fixos quando possível; `kilo-auto/free` e `openrouter/free` podem trocar o modelo subjacente. Se houver indisponibilidade, pause ou selecione outra opção gratuita explicitamente, sem fallback pago automático.
 
 Antes de começar: confira preço zero da variante, elegibilidade da conta, cotas, tratamento dos dados e suporte às ferramentas necessárias. Não reutilize tokens de assinatura de outro produto como se fossem uma API universal. **Ferramenta aberta + modelo gratuito hospedado é uma combinação válida e prioritária aqui.**
 
@@ -796,7 +800,7 @@ Antes de começar: confira preço zero da variante, elegibilidade da conta, cota
 
 ## 4. Exemplos práticos com arquitetura
 
-Os 11 cenários seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
+Os 12 cenários das seções 4.2 a 4.13 seguem a ordem do canivete. Os quatro códigos podem ser consultados aqui, nos blocos expansíveis, e executados pelos arquivos de [exemplos](exemplos/). Os demais cenários são receitas de arquitetura.
 
 ### 4.1 Configuração
 
@@ -1231,7 +1235,7 @@ Comece com **dois agentes + uma camada de coordenação existente + testes reais
 
 1. O controlador entrega ao autor a tarefa, os critérios de aceitação e o feedback anterior.
 2. O autor altera o código e devolve a identificação da revisão produzida.
-3. O controlador roda os testes nessa revisão.
+3. O controlador roda os testes nessa revisão. Identifique também alterações ainda não commitadas: o SHA de HEAD sozinho não identifica um diff sujo.
 4. O revisor recebe **essa mesma revisão**, os requisitos e a saída dos testes.
 5. Se houver problemas, o controlador devolve ao autor os achados e as falhas de teste.
 6. Após a correção, testes e revisão são executados novamente sobre o novo código.
@@ -1318,14 +1322,15 @@ openclaw plugins install @openclaw/acpx
 openclaw config set plugins.entries.acpx.enabled true
 ```
 
-No chat do OpenClaw, execute `/acp doctor`. Antes da delegação, confira ACP habilitado, despacho permitido, backend saudável e os alvos `opencode` e `kilocode` autorizados por `acp.allowedAgents`, quando essa lista estiver definida. Os CLIs devem estar instalados e autenticados no host do Gateway. Cada CLI mantém sua própria configuração de modelos e ferramentas.
+No chat do OpenClaw, execute `/acp doctor`. Antes da delegação, confira ACP habilitado, despacho permitido, backend saudável e os alvos `opencode` e `kilocode` autorizados por `acp.allowedAgents`, quando essa lista estiver definida. Se existir `plugins.allow`, inclua `acpx` nela. Os CLIs devem estar instalados e autenticados no host do Gateway. Cada CLI executa suas ferramentas e autenticação, mas o OpenClaw pode enviar um modelo substituto: a chamada explícita e a configuração de modelos dos subagentes têm precedência antes de o harness usar seu padrão. Confira o modelo efetivo de cada sessão para manter a oferta gratuita; IDs não são intercambiáveis entre CLIs.
 
-O recurso documentado `sessions_spawn`, com `runtime: "acp"` e o `agentId` do alvo, cria uma sessão do agente externo. Para orientar o coordenador, adapte esta instrução:
+O recurso documentado `sessions_spawn`, com `runtime: "acp"` e o `agentId` do alvo, cria uma sessão do agente externo. Use `mode: "run"` para uma etapa sem vínculo persistente; `mode: "session"` requer `thread: true` e suporte do canal. Informe `cwd` com o caminho absoluto do checkout preparado para ambos os papéis; não dependa do workspace padrão do coordenador. Para orientar o coordenador, adapte esta instrução:
 
 ```text
 No repositório indicado, coordene a tarefa pelos agentes externos:
 1. Entregue a implementação ao OpenCode, incluindo requisitos e testes.
-2. Aguarde a conclusão e registre a revisão Git e os testes executados.
+2. Aguarde a conclusão real da sessão e registre a revisão Git, o diff
+   ainda não commitado e os testes executados. Aceitação da tarefa não é conclusão.
 3. Entregue ao Kilo Code a revisão dessa mesma versão, sem editar arquivos.
    Passe requisitos, diff e saída dos testes; peça achados com evidências.
 4. Devolva os achados ao OpenCode para correção.
@@ -1337,15 +1342,19 @@ Use os modelos gratuitos configurados em cada papel.
 
 Esse texto é uma receita de coordenação sobre recursos existentes, não um workflow pré-configurado nem uma garantia de obediência ao limite. Para um teto obrigatório, configure controles de execução/orçamento no ambiente ou imponha o contador em um workflow. O modo de leitura do revisor também precisa ser aplicado por permissões, além da instrução. A disponibilidade do adaptador e o controle do modelo Kilo dependem da versão instalada.
 
-Fontes: [quickstart e alvos](https://docs.openclaw.ai/tools/acp-agents/quickstart) e [parâmetros das sessões](https://docs.openclaw.ai/tools/acp-agents/sessions). Exemplo conferido documentalmente; não executado com contas reais.
+Sessões ACP executam no host e não ficam automaticamente dentro do sandbox OpenClaw. Aplique as permissões do CLI/ambiente e mantenha as etapas sequenciais sobre a revisão correta.
+
+Fontes: [quickstart e alvos](https://docs.openclaw.ai/tools/acp-agents/quickstart), [parâmetros das sessões](https://docs.openclaw.ai/tools/acp-agents/sessions) e [entrega e limites do sandbox](https://docs.openclaw.ai/tools/acp-agents/delivery). Exemplo conferido documentalmente; não executado com contas reais.
 
 #### Alternativa: Hermes como coordenador
 
-Hermes pode criar um subagente implementador e depois um revisor com contexto independente por `delegate_task`. Passe caminhos, requisitos, revisão e testes explicitamente: um filho não recebe automaticamente toda a conversa do pai. Para delegar a agentes externos, o catálogo incluído oferece as skills `claude-code` e `codex`, que acionam esses CLIs pelo terminal; isso é diferente de escolher outro modelo para um subagente Hermes.
+Hermes pode criar um subagente implementador e depois um revisor com contexto independente por `delegate_task`. Passe caminhos, requisitos, revisão e testes explicitamente: um filho não recebe automaticamente toda a conversa do pai. Contexto próprio não significa isolamento de arquivos: por padrão os filhos compartilham o diretório do pai. `delegation.worktree_isolation: true` oferece worktrees em repositórios Git com backend de terminal local; confira o caminho realmente retornado, pois outros backends podem continuar no workspace compartilhado. Com worktrees, entregue ao revisor o commit produzido pelo implementador: um novo worktree a partir do HEAD antigo não contém automaticamente a implementação. Para delegar a agentes externos, o catálogo incluído oferece as skills `claude-code` e `codex`, que acionam esses CLIs pelo terminal; isso é diferente de escolher outro modelo para um subagente Hermes.
+
+Para a revisão nativa mais direta, `/review` já inicia outro subagente e devolve o parecer ao principal. Ele recebe um recorte recente da conversa e pode investigar o projeto com ferramentas; não é somente leitura por padrão. O modelo pode ser configurado em `auxiliary.review`; confira também `delegation.model` e o modelo do principal para controlar custos.
 
 Uma instrução possível é: “Delegue a implementação ao Claude Code; após a entrega, delegue a revisão ao Codex. Devolva os achados ao implementador, repita os testes e a revisão, e reporte aprovação ou pendências após até três rodadas”. Essa combinação ilustra a integração incluída, mas não é uma receita gratuita por padrão: confirme o acesso e o custo de ambos os serviços.
 
-Fontes: [skills incluídas](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog), [delegação e revisão](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns), [skill Claude Code](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/claude-code/SKILL.md) e [skill Codex](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/codex/SKILL.md).
+Fontes: [skills incluídas](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog), [delegação, `/review` e worktrees](https://hermes-agent.nousresearch.com/docs/user-guide/features/delegation), [skill Claude Code](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/claude-code/SKILL.md) e [skill Codex](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/codex/SKILL.md).
 
 #### Ferramentas para montar essa orquestração
 
@@ -1444,9 +1453,11 @@ Foram revisados conceitos, classificações, exemplos, famílias de modelos e re
 
 Pontos de manutenção confirmados nas fontes oficiais:
 
-- [AutoGen arquivado](https://github.com/microsoft/autogen), com orientação para [Microsoft Agent Framework](https://github.com/microsoft/agent-framework).
+- [README do AutoGen declara arquivamento e fim de manutenção](https://github.com/microsoft/autogen), com orientação para [Microsoft Agent Framework](https://github.com/microsoft/agent-framework).
 - [TGI em manutenção](https://huggingface.co/docs/inference-endpoints/engines/tgi), com alternativas vLLM/SGLang nos Inference Endpoints.
 - [Proxy OpenAI-compatible legado do Helicone](https://docs.helicone.ai/getting-started/integration-method/openai-proxy), com orientação para [AI Gateway](https://docs.helicone.ai/gateway/overview).
+
+**Auditoria do PR:** conferidos os 300 destinos HTTP(S) únicos então presentes: 298 responderam, Milvus apresentou ciclo de redirecionamento (link substituído pelo repositório oficial) e Neo4j respondeu 403 ao script, mas abriu na pesquisa web. Âncoras e arquivos locais foram verificados; os cinco blocos Python passaram por análise de sintaxe e os quatro exemplos completos coincidem com os arquivos executáveis. Os 14 testes offline passaram; a construção do exemplo Agents SDK também foi exercitada com execução de modelo simulada. Isso não comprova chamadas autenticadas nem qualidade dos modelos remotos.
 
 **Limitações:** o catálogo não cobre todos os lançamentos. As fontes oficiais podem mudar e variar por idioma; divergências encontradas no catálogo Gemini estão registradas na seção de modelos. Não foram medidos rankings, VRAM mínima, latência, ganhos de treino ou preços comparativos. Recursos dependentes de conta não foram confirmados com credenciais reais.
 

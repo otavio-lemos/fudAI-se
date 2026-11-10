@@ -1,5 +1,14 @@
 # Histórico de alterações
 
+## 2026-11-10 — auditoria e correções dos orquestradores
+
+- Documenta OpenClaw/ACPX e Hermes, com receita entre OpenCode e Kilo e alternativa com CLIs externos.
+- Corrige a omissão de agentes ACP externos no OpenHands e aponta seu exemplo oficial de refinamento iterativo, distinguindo os dois recursos.
+- Esclarece seleção efetiva de modelos, diretório, permissões e limites do sandbox no OpenClaw; contexto e worktrees no Hermes; acrescenta o comando nativo `/review`.
+- Registra a restrição dos modelos Free do OpenCode ao próprio cliente e confere custos de tarefas auxiliares.
+- Corrige contagem dos casos práticos, endereço Milvus, URLs Google e inclui ACP no mapa de protocolos.
+- Verifica 300 destinos externos, âncoras, arquivos locais, cinco blocos Python e os 14 testes offline; sem chamadas autenticadas aos modelos.
+
 ## 2026-11-10 — curadoria de orquestração por adoção e escopo
 
 - Acrescenta Ruflo/Claude Flow e OpenHands, junto de CrewAI, LangGraph e Microsoft Agent Framework, com licença, estrelas consultadas pela API GitHub e distinção de função.
