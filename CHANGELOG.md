@@ -4,6 +4,7 @@
 
 - Reúne o conteúdo no README, com os seis capítulos numerados do canivete: conceitos, ferramentas, recursos/APIs, exemplos, segurança e fontes.
 - Converte a navegação entre oito páginas em índice e atalhos dentro do próprio README.
+- Acrescenta o loop autor–revisor entre dois agentes de código, com executor de testes, contrato de feedback, limites, critérios de parada e ferramentas de orquestração.
 - Explica o ciclo de agentes autônomos, harness, subagentes, orquestrador de código, delegação por função e retorno de evidências, com exemplo de integração.
 - Integra parâmetros e arquiteturas recentes ao capítulo de conceitos e remove resumos duplicados do mapa.
 - Mantém modelos, tecnologias e correções da revisão; disponibiliza os quatro códigos em blocos expansíveis no guia.

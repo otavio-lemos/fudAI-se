@@ -29,6 +29,7 @@ Um guia de consulta em português: **conceito → ferramenta → modelo/serviço
 | Encontrar famílias e checkpoints atuais | [3.1 APIs](#31-modelos-via-api) e [3.2 Pesos disponíveis](#32-pesos-disponíveis-famílias-e-checkpoints-recentes) |
 | Escolher ferramentas para programar com IA | [2.7 Programação](#27-programação-assistida-por-ia) |
 | Entender agentes que trabalham sozinhos e coordenam outros | [1.15 Agentes e orquestração](#115-agentes-autônomos-subagentes-e-orquestração) |
+| Fazer dois agentes de código revisarem e corrigirem em loop | [4.13 Autor e revisor](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) |
 | Criar especialistas por função | [1.16 Exemplo de orquestrador](#116-exemplo-orquestrador-que-cria-especialistas-por-função) |
 | Montar uma aplicação de verdade | [4. Exemplos](#4-exemplos-práticos-com-arquitetura) |
 
@@ -1149,6 +1150,106 @@ async def chat(websocket: WebSocket):
 
 </details>
 
+
+### 4.13 Loop entre dois agentes de código: autor e revisor
+
+**Caso:** um agente implementa, outro analisa o código produzido e devolve problemas para a próxima correção. Esse padrão é conhecido como *generator–evaluator* ou *evaluator–optimizer*. É uma aplicação direta de orquestração; precisa estar no canivete como receita de trabalho, além da lista de ferramentas.
+
+Minha configuração inicial para esse caso seria **dois agentes + um controlador em código + testes reais**. O controlador decide a ordem, conserva o estado e aplica o limite de rodadas. Não é necessário gastar uma terceira chamada de modelo apenas para alternar autor e revisor. Um agente supervisor passa a ser útil quando precisa decompor tarefas, distribuir vários módulos ou escolher especialistas durante o trabalho.
+
+| Participante | Função | Entrega |
+| --- | --- | --- |
+| Agente A — autor | Implementar e corrigir os problemas recebidos | Patch, revisão/commit e explicação das alterações |
+| Agente B — revisor | Ler requisitos, código/diff e resultados de testes; apontar falhas | Aprovação ou pedido de mudanças com evidências |
+| Executor de testes | Rodar comandos definidos pelo projeto sobre a revisão atual | Exit code, saída, falhas e revisão testada |
+| Controlador | Chamar os participantes, validar retornos e decidir repetir/encerrar | Estado da rodada e resultado verificável |
+
+#### O ciclo completo
+
+1. O controlador entrega ao autor a tarefa, os critérios de aceitação e o feedback anterior.
+2. O autor altera o código e devolve a identificação da revisão produzida.
+3. O controlador roda os testes nessa revisão.
+4. O revisor recebe **essa mesma revisão**, os requisitos e a saída dos testes.
+5. Se houver problemas, o controlador devolve ao autor os achados e as falhas de teste.
+6. Após a correção, testes e revisão são executados novamente sobre o novo código.
+7. O ciclo termina com aprovação e testes válidos, ou com um estado de impedimento quando atingir o limite.
+
+```mermaid
+flowchart TD
+    A["Agente A: implementar ou corrigir"] --> T["Executar testes na revisão atual"]
+    T --> B["Agente B: revisar código e evidências"]
+    B --> C{"Aprovado e testes passaram?"}
+    C -->|Sim| F["Concluir com a revisão validada"]
+    C -->|Não| L{"Ainda há orçamento e progresso?"}
+    L -->|Sim: devolver achados| A
+    L -->|Não| P["Parar com pendências explícitas"]
+```
+
+#### O que o revisor deve devolver
+
+Use um contrato estruturado, em vez de um texto solto como “pode melhorar”. Exemplo ilustrativo:
+
+```json
+{
+  "revisao": "identificador-da-revisao-analisada",
+  "decisao": "solicitar_mudancas",
+  "achados": [
+    {
+      "id": "R1",
+      "arquivo": "src/login.py",
+      "linha": 42,
+      "gravidade": "alta",
+      "problema": "A sessão continua válida após logout.",
+      "evidencia": "O teste de reutilização da sessão falhou.",
+      "criterio_de_correcao": "A sessão anterior deve ser rejeitada após logout."
+    }
+  ]
+}
+```
+
+O autor responde a cada ID: corrigido, não aplicável com evidência ou pendente. O revisor verifica a correção, sem inventar novas exigências fora da tarefa. Não exija um número mínimo de defeitos: se não encontrar problema sustentado, ele deve poder aprovar.
+
+#### Esqueleto do controlador
+
+O pseudocódigo abaixo descreve o fluxo. `autor`, `revisor` e `executar_testes` são adaptadores a implementar com o runtime e os comandos do projeto; não são APIs universais de um produto.
+
+```text
+feedback = tarefa_original
+para rodada em 1..3:
+    entrega = autor.executar(tarefa_original, feedback)
+    testes = executar_testes(entrega.revisao)
+    parecer = revisor.analisar(tarefa_original, entrega.revisao, testes)
+    validar_schema_e_revisao(parecer, entrega.revisao)
+
+    se testes.passaram e parecer.decisao == aprovar:
+        retornar aprovado(entrega.revisao, testes, parecer)
+
+    se orçamento_esgotado ou correção_sem_progresso:
+        retornar bloqueado(entrega, testes, parecer)
+
+    feedback = combinar_falhas_e_achados(testes, parecer)
+retornar limite_de_rodadas_com_pendencias
+```
+
+Defina no código um teto de rodadas, tempo e custo; uma instrução de prompt não garante esses limites. Registre revisão, testes, parecer e feedback por rodada. Uma revisão inválida ou falha de ferramenta não conta como aprovação. Sem mudança no código nem justificativa que resolva o achado, interrompa o ciclo em vez de pagar por respostas repetidas.
+
+#### Ferramentas para montar essa orquestração
+
+| Caminho | O que resolve | Quando escolher |
+| --- | --- | --- |
+| [LangGraph: evaluator–optimizer](https://docs.langchain.com/oss/python/langgraph/workflows-agents) | Estado, condições de retorno, ciclos e persistência configurável | Pipeline próprio com controle explícito de revisão/correção |
+| [Agents SDK: orquestração por código](https://openai.github.io/openai-agents-python/multi_agent/) | Executar agentes, encadear saídas e controlar o loop na aplicação | Dois especialistas com contratos e limites definidos pelo seu código |
+| [Claude Code: subagentes](https://code.claude.com/docs/en/sub-agents) | Especialistas com instruções, contexto e ferramentas delimitados | Revisão delegada dentro do agente de código, sem criar toda a infraestrutura inicial |
+| [Codex + Agents SDK/MCP](https://developers.openai.com/cookbook/examples/codex/codex_mcp_agents_sdk/building_consistent_workflows_codex_cli_agents_sdk) | Integrar um agente que realmente trabalha no repositório a um controlador | Automatizar edição/testes e coordenar papéis em código |
+| [CrewAI](https://docs.crewai.com/en/concepts/processes) | Papéis, tarefas e processo de equipe | Uma equipe com delegação e responsabilidades; configure o ciclo de correção explicitamente |
+
+**Para começar:** se você já trabalha em um agente de código que oferece subagentes, use um revisor com ferramentas de leitura e deixe a escrita com o autor. Para executar a mesma rotina repetidamente, com estado, relatórios e critérios rígidos, eu partiria de um controlador Python; LangGraph faz sentido quando esse fluxo ganhar ramificações e retomada. Uma equipe hierárquica, por si só, não garante o loop nem suas condições de saída.
+
+Você pode usar o mesmo modelo nos dois agentes, em sessões separadas, ou combinar agentes/provedores diferentes. Modelos distintos podem trazer perspectivas diferentes, mas não garantem independência ou correção. Para misturar dois agentes de código, integre cada CLI/SDK por um adaptador com saída legível pela máquina, conforme suporte oficial da versão usada; não conecte terminais por simples cópia de mensagens.
+
+Mantenha o revisor em leitura e faça-o examinar requisitos e evidências, não só a justificativa do autor. Em execuções concorrentes, use cópias/worktrees isolados e identifique o commit revisto. Se ambos também puderem corrigir, defina quem possui a escrita em cada fase: dois agentes alterando o mesmo arquivo ao mesmo tempo criam conflitos e tornam o parecer obsoleto.
+
+Esta é uma receita de arquitetura; o loop de edição real de um repositório não está implementado pelos exemplos de propostas textuais da seção 1.16. Aprovação entre modelos complementa testes, análise estática e revisão humana conforme o impacto; não os substitui.
 
 [↑ Índice](#índice)
 
