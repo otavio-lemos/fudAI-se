@@ -625,7 +625,18 @@ Para escolher a base de um sistema, diferencie plataforma de desenvolvimento, fr
 
 Contagens consultadas pela API GitHub; os cinco repositórios estavam ativos e não arquivados. Não foi feito benchmark nem teste de integração destes projetos nesta revisão. Use a documentação e o histórico de releases para conferir manutenção e suporte efetivo, além das estrelas.
 
-**Para o cenário deste guia:** investigar primeiro Ruflo quando a prioridade for uma camada sobre agentes de código; OpenHands quando a prioridade for uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph quando a prioridade for controlar o workflow em uma aplicação própria. Nenhum nome da tabela garante, por si, suporte simultâneo a OpenCode, Kilo, OMP e agy ou modelos gratuitos: confirme as integrações e configure os providers da [seção 3.10](#310-modelos-gratuitos-hospedados).
+#### Orquestradores prontos para delegar trabalho
+
+| Projeto | Recurso existente | Como usar no cenário autor–revisor |
+| --- | --- | --- |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Plugin oficial `@openclaw/acpx` para sessões de agentes externos; o catálogo documenta OpenCode, Kilo Code, Claude Code, Gemini CLI e Codex, entre outros | O coordenador inicia o implementador, acompanha a sessão e envia a revisão a outro agente. Configure os alvos permitidos, autenticação e regras do ciclo |
+| [Hermes Agent, da Nous Research](https://github.com/NousResearch/hermes-agent) | `delegate_task` cria subagentes com conversa, terminal e ferramentas próprios; skills incluídas delegam tarefas aos CLIs Claude Code e Codex | Use um especialista para implementar e outro, com contexto novo, para revisar; o agente principal recebe os resultados e encaminha as correções |
+
+**Para o cenário deste guia:** quando a prioridade for coordenar CLIs diferentes, comece verificando o OpenClaw com ACPX e os alvos documentados. Hermes oferece delegação nativa e instruções prontas para alguns CLIs externos; isso não implica suporte incluído a qualquer CLI. Ruflo é outra camada de coordenação; OpenHands é uma plataforma de desenvolvimento autônomo; CrewAI/LangGraph atendem workflows programáveis em uma aplicação própria. A [receita da seção 4.13](#413-loop-entre-dois-agentes-de-código-autor-e-revisor) mostra como aplicar os papéis e o retorno de feedback.
+
+Fontes oficiais: [OpenClaw: ACP e subagentes](https://docs.openclaw.ai/tools/acp-agents), [instalação e alvos ACPX](https://docs.openclaw.ai/tools/acp-agents/quickstart), [Hermes: catálogo incluído](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) e [padrões de delegação](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns).
+
+A ferramenta aberta e a oferta do modelo são escolhas separadas. Configure também o modelo do coordenador e de cada trabalhador; para modelos gratuitos hospedados, consulte a [seção 3.10](#310-modelos-gratuitos-hospedados). Instalar o orquestrador não torna gratuitos os serviços chamados. As integrações foram conferidas na documentação, sem execução autenticada de ponta a ponta nesta revisão.
 
 [↑ Índice](#índice)
 
@@ -1207,7 +1218,7 @@ async def chat(websocket: WebSocket):
 
 **Caso:** um agente implementa, outro analisa o código produzido e devolve problemas para a próxima correção. Esse padrão é conhecido como *generator–evaluator* ou *evaluator–optimizer*. É uma aplicação direta de orquestração; precisa estar no canivete como receita de trabalho, além da lista de ferramentas.
 
-Minha configuração inicial para esse caso seria **dois agentes + um controlador em código + testes reais**. O controlador decide a ordem, conserva o estado e aplica o limite de rodadas. Não é necessário gastar uma terceira chamada de modelo apenas para alternar autor e revisor. Um agente supervisor passa a ser útil quando precisa decompor tarefas, distribuir vários módulos ou escolher especialistas durante o trabalho.
+Comece com **dois agentes + uma camada de coordenação existente + testes reais**. OpenClaw pode coordenar CLIs externos por ACPX; Hermes oferece delegação nativa e skills para alguns CLIs. O coordenador organiza a ordem e encaminha o feedback. Um controlador em código é uma alternativa quando você precisa impor condições e limites determinísticos; não é requisito para começar.
 
 | Participante | Função | Entrega |
 | --- | --- | --- |
@@ -1293,28 +1304,68 @@ Defina no código um teto de rodadas, tempo e custo; uma instrução de prompt n
 | Kilo Code + `kilo-auto/free` | Subagente de revisão Kilo + oferta gratuita | Agente principal Kilo; delegação conforme versão atual |
 | OMP + OpenRouter `:free` | Revisores acionados por `/review`, com modelo gratuito configurado | OMP; confira também os modelos dos papéis secundários |
 | Pi + modelo `:free` do OpenRouter | Outra sessão Pi ou OMP com modelo `:free` | Controlador usando SDK/RPC; Pi básico não cria subagentes sozinho |
-| OpenCode + modelo Free | Kilo Code + `kilo-auto/free` | Controlador com adaptadores para os dois clientes e a mesma revisão Git |
+| OpenCode + modelo Free | Kilo Code + `kilo-auto/free` | OpenClaw + ACPX, com alvos `opencode` e `kilocode` instalados, autenticados e permitidos; ambos analisam a mesma revisão Git |
 | agy + modelo incluído na quota Free | Revisor/subagente suportado pelo agy, ou outro cliente com oferta gratuita | Recurso nativo documentado ou controlador externo; não presumir uma API OpenRouter no agy |
 
 Essas combinações são receitas de integração, não garantia de interoperabilidade automática. Cada cliente precisa receber a tarefa, acessar a revisão certa e devolver um resultado estruturado. Para experimentar, comece com os dois papéis dentro de OpenCode, Kilo ou OMP; misture clientes quando precisar de uma segunda implementação ou provider. Todos os papéis devem usar ofertas gratuitas explicitamente, inclusive planejamento, resumo e revisão.
 
+#### Exemplo: OpenClaw coordena OpenCode e Kilo Code
+
+Com OpenClaw já instalado, instale e habilite o plugin oficial:
+
+```bash
+openclaw plugins install @openclaw/acpx
+openclaw config set plugins.entries.acpx.enabled true
+```
+
+No chat do OpenClaw, execute `/acp doctor`. Antes da delegação, confira ACP habilitado, despacho permitido, backend saudável e os alvos `opencode` e `kilocode` autorizados por `acp.allowedAgents`, quando essa lista estiver definida. Os CLIs devem estar instalados e autenticados no host do Gateway. Cada CLI mantém sua própria configuração de modelos e ferramentas.
+
+O recurso documentado `sessions_spawn`, com `runtime: "acp"` e o `agentId` do alvo, cria uma sessão do agente externo. Para orientar o coordenador, adapte esta instrução:
+
+```text
+No repositório indicado, coordene a tarefa pelos agentes externos:
+1. Entregue a implementação ao OpenCode, incluindo requisitos e testes.
+2. Aguarde a conclusão e registre a revisão Git e os testes executados.
+3. Entregue ao Kilo Code a revisão dessa mesma versão, sem editar arquivos.
+   Passe requisitos, diff e saída dos testes; peça achados com evidências.
+4. Devolva os achados ao OpenCode para correção.
+5. Rode os testes e peça nova revisão após cada alteração.
+Encerre quando os testes passarem e a revisão aprovar.
+Solicite no máximo três rodadas; se não resolver, informe as pendências.
+Use os modelos gratuitos configurados em cada papel.
+```
+
+Esse texto é uma receita de coordenação sobre recursos existentes, não um workflow pré-configurado nem uma garantia de obediência ao limite. Para um teto obrigatório, configure controles de execução/orçamento no ambiente ou imponha o contador em um workflow. O modo de leitura do revisor também precisa ser aplicado por permissões, além da instrução. A disponibilidade do adaptador e o controle do modelo Kilo dependem da versão instalada.
+
+Fontes: [quickstart e alvos](https://docs.openclaw.ai/tools/acp-agents/quickstart) e [parâmetros das sessões](https://docs.openclaw.ai/tools/acp-agents/sessions). Exemplo conferido documentalmente; não executado com contas reais.
+
+#### Alternativa: Hermes como coordenador
+
+Hermes pode criar um subagente implementador e depois um revisor com contexto independente por `delegate_task`. Passe caminhos, requisitos, revisão e testes explicitamente: um filho não recebe automaticamente toda a conversa do pai. Para delegar a agentes externos, o catálogo incluído oferece as skills `claude-code` e `codex`, que acionam esses CLIs pelo terminal; isso é diferente de escolher outro modelo para um subagente Hermes.
+
+Uma instrução possível é: “Delegue a implementação ao Claude Code; após a entrega, delegue a revisão ao Codex. Devolva os achados ao implementador, repita os testes e a revisão, e reporte aprovação ou pendências após até três rodadas”. Essa combinação ilustra a integração incluída, mas não é uma receita gratuita por padrão: confirme o acesso e o custo de ambos os serviços.
+
+Fontes: [skills incluídas](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog), [delegação e revisão](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns), [skill Claude Code](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/claude-code/SKILL.md) e [skill Codex](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/codex/SKILL.md).
+
 #### Ferramentas para montar essa orquestração
 
-Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos de orquestração](#211-orquestração-projetos-com-adoção-ampla): Ruflo/Claude Flow, OpenHands, CrewAI e LangGraph. Eles têm papéis diferentes; escolha conforme a necessidade de coordenar CLIs existentes ou implementar um workflow próprio.
+Para avaliar bases com comunidade ampla, consulte primeiro o [quadro de projetos de orquestração](#211-orquestração-projetos-com-adoção-ampla): OpenClaw, Hermes, Ruflo/Claude Flow, OpenHands, CrewAI e LangGraph. Eles têm papéis diferentes; escolha conforme a necessidade de coordenar CLIs existentes ou implementar um workflow próprio.
 
 | Caminho | O que resolve | Quando escolher |
 | --- | --- | --- |
 | [OpenCode](https://opencode.ai/docs/agents/) / [Kilo Code](https://kilo.ai/docs/customize/custom-subagents) | Agente principal e especialistas configuráveis | Montar autor e revisor com modelos gratuitos hospedados |
 | [OMP](https://github.com/can1357/oh-my-pi) / [Pi](https://github.com/earendil-works/pi) | Subagentes e revisão no OMP / SDK, RPC e extensões no Pi | Controlar sessões e usar OpenRouter ou outro provider suportado |
+| [OpenClaw + ACPX](https://docs.openclaw.ai/tools/acp-agents/quickstart) | Sessões e controle de agentes de código externos | Coordenar OpenCode, Kilo e outros alvos documentados, com CLIs autenticados |
+| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns) | Subagentes isolados e skills incluídas para delegação a Claude Code/Codex | Um agente principal distribui tarefas e recebe os resultados |
 | [LangGraph: evaluator–optimizer](https://docs.langchain.com/oss/python/langgraph/workflows-agents) | Estado, condições de retorno, ciclos e persistência configurável | Pipeline próprio com controle explícito de revisão/correção |
 | [Agents SDK: orquestração por código](https://openai.github.io/openai-agents-python/multi_agent/) | Executar agentes, encadear saídas e controlar o loop na aplicação | Dois especialistas com contratos e limites definidos pelo seu código |
 | [Claude Code: subagentes](https://code.claude.com/docs/en/sub-agents) | Especialistas com instruções, contexto e ferramentas delimitados | Revisão delegada dentro do agente de código, sem criar toda a infraestrutura inicial |
 | [Codex + Agents SDK/MCP](https://developers.openai.com/cookbook/examples/codex/codex_mcp_agents_sdk/building_consistent_workflows_codex_cli_agents_sdk) | Integrar um agente que realmente trabalha no repositório a um controlador | Automatizar edição/testes e coordenar papéis em código |
 | [CrewAI](https://docs.crewai.com/en/concepts/processes) | Papéis, tarefas e processo de equipe | Uma equipe com delegação e responsabilidades; configure o ciclo de correção explicitamente |
 
-**Para começar:** se você já trabalha em um agente de código que oferece subagentes, use um revisor com ferramentas de leitura e deixe a escrita com o autor. Para executar a mesma rotina repetidamente, com estado, relatórios e critérios rígidos, eu partiria de um controlador Python; LangGraph faz sentido quando esse fluxo ganhar ramificações e retomada. Uma equipe hierárquica, por si só, não garante o loop nem suas condições de saída.
+**Para começar:** se você já trabalha em um agente de código que oferece subagentes, use um revisor com ferramentas de leitura e deixe a escrita com o autor. Para coordenar clientes diferentes, verifique primeiro OpenClaw/ACPX; para delegação nativa e os CLIs incluídos, avalie Hermes. Use um workflow ou controlador próprio quando precisar impor regras que a configuração existente não ofereça; LangGraph ajuda com ramificações e retomada. Uma equipe hierárquica, por si só, não garante o loop nem suas condições de saída.
 
-Você pode usar o mesmo modelo nos dois agentes, em sessões separadas, ou combinar agentes/provedores diferentes. Modelos distintos podem trazer perspectivas diferentes, mas não garantem independência ou correção. Para misturar dois agentes de código, integre cada CLI/SDK por um adaptador com saída legível pela máquina, conforme suporte oficial da versão usada; não conecte terminais por simples cópia de mensagens.
+Você pode usar o mesmo modelo nos dois agentes, em sessões separadas, ou combinar agentes/provedores diferentes. Modelos distintos podem trazer perspectivas diferentes, mas não garantem independência ou correção. Para misturar dois agentes de código, priorize conectores existentes como ACPX ou as skills incluídas do coordenador. Crie um adaptador somente quando a ferramenta desejada não tiver integração compatível.
 
 Mantenha o revisor em leitura e faça-o examinar requisitos e evidências, não só a justificativa do autor. Em execuções concorrentes, use cópias/worktrees isolados e identifique o commit revisto. Se ambos também puderem corrigir, defina quem possui a escrita em cada fase: dois agentes alterando o mesmo arquivo ao mesmo tempo criam conflitos e tornam o parecer obsoleto.
 
