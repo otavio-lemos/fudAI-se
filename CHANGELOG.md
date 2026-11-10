@@ -1,5 +1,7 @@
 # Histórico de alterações
 
+**Estrutura atual proposta neste PR:** guia completo e sequencial no `README.md`, com exemplos executáveis em `exemplos/`. O conteúdo das oito páginas de `docs/` foi reunido no README; a divisão em páginas separadas foi substituída.
+
 ## 2026-11-10 — auditoria e correções dos orquestradores
 
 - Documenta OpenClaw/ACPX e Hermes, com receita entre OpenCode e Kilo e alternativa com CLIs externos.
@@ -32,9 +34,11 @@
 - Mantém modelos, tecnologias e correções da revisão; disponibiliza os quatro códigos em blocos expansíveis no guia.
 - Remove os oito documentos separados; preserva os scripts executáveis e seus testes como material de apoio.
 
-## 2026-11-10 — revisão e ampliação geral
+## 2026-11-10 — revisão inicial e ampliação geral (estrutura substituída)
 
-- Organiza o README como entrada do canivete e separa conceitos, ferramentas, modelos/serviços, parâmetros, mapa ampliado, exemplos, segurança e fontes em `docs/`.
+Esta entrada registra a revisão inicial. A organização em `docs/` foi substituída pela restauração do guia único, registrada acima; os tópicos foram incorporados ao README.
+
+- Inicialmente dividiu conceitos, ferramentas, modelos/serviços, parâmetros, mapa ampliado, exemplos, segurança e fontes em oito páginas de `docs/`, com o README como entrada. Essa divisão não corresponde à estrutura atual proposta.
 - Acrescenta famílias/checkpoints atuais e referências oficiais: GPT-6/6.1, Claude Fable/5.5, Gemini 3/4, Grok, Qwen3.8, DeepSeek V4.1, Kimi K3.1, MiniMax M3.1, GLM-5.3, Mistral Large 4, Gemma 4, Granite 4.1 e gpt-oss.
 - Expande recuperação, embeddings/rerankers, imagem, vídeo, áudio, agentes, MCP/A2A, sandboxes, documentos, execução local e serving distribuído.
 - Distingue parâmetros totais/ativos, quantização, sampling, thinking, cache, orçamento de agentes e configuração de engines; adiciona preset específico de Qwen com fonte.
